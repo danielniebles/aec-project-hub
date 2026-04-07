@@ -124,6 +124,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
                 className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm mt-0.5"
                 required
               >
+                {/* TODO: This should be configurable or be an array */}
                 <option value="internal">Interno</option>
                 <option value="camacol">CAMACOL</option>
                 <option value="gobernacion">Gobernación</option>

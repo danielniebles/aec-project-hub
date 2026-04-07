@@ -83,6 +83,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
                 className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
               >
+                {/* TODO: Must be configurable or extract to an enum */}
                 <option value="material">Material</option>
                 <option value="labor">Mano de obra</option>
                 <option value="equipment">Equipo</option>
