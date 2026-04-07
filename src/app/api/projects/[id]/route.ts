@@ -11,7 +11,13 @@ export async function GET(
     include: {
       costItems: {
         include: {
-          apuItem: true,
+          apuItem: {
+              include: {
+                lines: {
+                  include: { resource: true },
+                },
+              },
+            },
           expenses: true,
         },
         orderBy: { createdAt: "asc" },

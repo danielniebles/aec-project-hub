@@ -5,8 +5,17 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
 import AddAPUItemModal from "@/components/proyectos/AddAPUItemModal";
-import { formatCOP } from "@/lib/format";
+import ExpenseForm from "@/components/proyectos/ExpenseForm";
+import { formatCOP, formatDate } from "@/lib/format";
 import { STATUS_LABEL, STATUS_BADGE, TYPE_LABEL } from "@/lib/projectStatus";
+
+type Expense = {
+  id: string;
+  description: string;
+  date: string;
+  total: string;
+  resource: { code: string; description: string } | null;
+};
 
 type CostItem = {
   id: string;
@@ -17,7 +26,8 @@ type CostItem = {
   totalBudgeted: number;
   totalExecuted: number;
   variance: number;
-  apuItem: { code: string } | null;
+  apuItem: { code: string; lines: { resource: { id: string; code: string; description: string; unit: string } | null }[] } | null;
+  expenses: Expense[];
 };
 
 type Project = {
@@ -38,6 +48,8 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Presupuesto");
   const [showAddItem, setShowAddItem] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [addExpenseTo, setAddExpenseTo] = useState<CostItem | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/projects/${id}`);
@@ -49,6 +61,11 @@ export default function ProjectDetailPage() {
 
   async function handleRemoveItem(costItemId: string) {
     await fetch(`/api/projects/${id}/cost-items?costItemId=${costItemId}`, { method: "DELETE" });
+    load();
+  }
+
+  async function handleRemoveExpense(costItemId: string, expenseId: string) {
+    await fetch(`/api/projects/${id}/cost-items/${costItemId}/expenses?expenseId=${expenseId}`, { method: "DELETE" });
     load();
   }
 
@@ -91,8 +108,7 @@ export default function ProjectDetailPage() {
               </span>
             </div>
             <p className="text-sm text-gray-500 flex items-center gap-2">
-              <span>▦</span>
-              <span>{typeLabel}</span>
+              <span>▦</span><span>{typeLabel}</span>
               {project.location && <><span className="text-gray-300">|</span><span>{project.location}</span></>}
             </p>
           </div>
@@ -113,14 +129,9 @@ export default function ProjectDetailPage() {
         {/* Tabs */}
         <div className="flex gap-6 border-b border-gray-200 mb-6">
           {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+            <button key={tab} onClick={() => setActiveTab(tab)}
               className="pb-3 text-sm font-medium transition-colors"
-              style={activeTab === tab
-                ? { color: "#0d9488", borderBottom: "2px solid #0d9488" }
-                : { color: "#9ca3af" }
-              }
+              style={activeTab === tab ? { color: "#0d9488", borderBottom: "2px solid #0d9488" } : { color: "#9ca3af" }}
             >
               {tab}
             </button>
@@ -172,7 +183,8 @@ export default function ProjectDetailPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Código APU</th>
+                    <th className="w-6 px-3 py-3"></th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Código APU</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Descripción</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Und</th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Cant.</th>
@@ -186,48 +198,128 @@ export default function ProjectDetailPage() {
                 <tbody>
                   {project.costItems.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-5 py-10 text-center text-gray-400 text-sm">
+                      <td colSpan={10} className="px-5 py-10 text-center text-gray-400 text-sm">
                         Sin ítems de presupuesto. Usa "+ Nuevo Ítem" para agregar APUs.
                       </td>
                     </tr>
                   )}
                   {project.costItems.map((item) => {
                     const overBudget = item.variance > 0;
+                    const isExpanded = expandedItems.has(item.id);
+                    const apuResources = item.apuItem?.lines.flatMap((l) => l.resource ? [l.resource] : []) ?? [];
+
                     return (
-                      <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td className="px-5 py-3 font-mono text-teal-600 font-semibold text-xs">
-                          {item.apuItem?.code ?? "—"}
-                        </td>
-                        <td className="px-4 py-3 text-gray-800">{item.description}</td>
-                        <td className="px-4 py-3 text-gray-500">{item.unit}</td>
-                        <td className="px-4 py-3 text-right text-gray-700">{parseFloat(item.quantityBudgeted).toFixed(1)}</td>
-                        <td className="px-4 py-3 text-right text-gray-700">{formatCOP(item.unitCostBudgeted)}</td>
-                        <td className="px-4 py-3 text-right font-medium text-gray-800">{formatCOP(item.totalBudgeted)}</td>
-                        <td className="px-4 py-3 text-right text-gray-700">{formatCOP(item.totalExecuted)}</td>
-                        <td className="px-4 py-3 text-center text-lg">
-                          {item.totalExecuted === 0
-                            ? <span className="text-gray-300">—</span>
-                            : overBudget
-                              ? <span className="text-red-500">↗</span>
-                              : <span className="text-green-500">↘</span>
-                          }
-                        </td>
-                        <td className="px-4 py-3">
-                          <button
-                            onClick={() => handleRemoveItem(item.id)}
-                            className="text-gray-300 hover:text-red-400 transition-colors"
-                            title="Eliminar ítem"
-                          >
-                            🗑
-                          </button>
-                        </td>
-                      </tr>
+                      <>
+                        {/* Main row */}
+                        <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                          <td className="px-3 py-3">
+                            <button
+                              onClick={() => setExpandedItems((prev) => {
+                                const next = new Set(prev);
+                                next.has(item.id) ? next.delete(item.id) : next.add(item.id);
+                                return next;
+                              })}
+                              className="text-gray-400 hover:text-teal-600 transition-colors"
+                              title={isExpanded ? "Cerrar" : "Ver gastos"}
+                            >
+                              {isExpanded
+                                ? <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                : <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                              }
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 font-mono text-teal-600 font-semibold text-xs">
+                            {item.apuItem?.code ?? "—"}
+                          </td>
+                          <td className="px-4 py-3 text-gray-800">{item.description}</td>
+                          <td className="px-4 py-3 text-gray-500">{item.unit}</td>
+                          <td className="px-4 py-3 text-right text-gray-700">{parseFloat(item.quantityBudgeted).toFixed(1)}</td>
+                          <td className="px-4 py-3 text-right text-gray-700">{formatCOP(item.unitCostBudgeted)}</td>
+                          <td className="px-4 py-3 text-right font-medium text-gray-800">{formatCOP(item.totalBudgeted)}</td>
+                          <td className="px-4 py-3 text-right text-gray-700">{formatCOP(item.totalExecuted)}</td>
+                          <td className="px-4 py-3 text-center">
+                            {item.totalExecuted === 0
+                              ? <span className="text-gray-300 text-sm">—</span>
+                              : overBudget
+                                ? <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-500 inline" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                                : <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-500 inline" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            }
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => handleRemoveItem(item.id)}
+                              className="text-gray-300 hover:text-red-400 transition-colors"
+                              title="Eliminar ítem"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                            </button>
+                          </td>
+                        </tr>
+
+                        {/* Expanded expenses panel */}
+                        {isExpanded && (
+                          <tr key={`${item.id}-expenses`} className="bg-gray-50">
+                            <td colSpan={10} className="px-8 py-4">
+                              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                                {/* Expense list */}
+                                {item.expenses.length === 0 ? (
+                                  <p className="text-xs text-gray-400 px-4 py-3">Sin gastos registrados para este ítem.</p>
+                                ) : (
+                                  <table className="w-full text-xs">
+                                    <thead>
+                                      <tr className="bg-gray-100 border-b border-gray-200">
+                                        <th className="text-left px-4 py-2 text-gray-500 font-semibold uppercase tracking-wide">Descripción</th>
+                                        <th className="text-left px-4 py-2 text-gray-500 font-semibold uppercase tracking-wide">Insumo</th>
+                                        <th className="text-left px-4 py-2 text-gray-500 font-semibold uppercase tracking-wide">Fecha</th>
+                                        <th className="text-right px-4 py-2 text-gray-500 font-semibold uppercase tracking-wide">Total</th>
+                                        <th className="px-3 py-2"></th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {item.expenses.map((exp) => (
+                                        <tr key={exp.id} className="border-b border-gray-100 hover:bg-white transition-colors">
+                                          <td className="px-4 py-2 text-gray-700">{exp.description}</td>
+                                          <td className="px-4 py-2 text-gray-400">
+                                            {exp.resource
+                                              ? <span className="text-teal-600">{exp.resource.code} — {exp.resource.description}</span>
+                                              : <span className="italic">Sin mapear</span>
+                                            }
+                                          </td>
+                                          <td className="px-4 py-2 text-gray-500">{formatDate(exp.date)}</td>
+                                          <td className="px-4 py-2 text-right font-medium text-gray-800">{formatCOP(exp.total)}</td>
+                                          <td className="px-3 py-2">
+                                            <button
+                                              onClick={() => handleRemoveExpense(item.id, exp.id)}
+                                              className="text-gray-300 hover:text-red-400 transition-colors"
+                                              title="Eliminar gasto"
+                                            >
+                                              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                )}
+
+                                {/* Add expense button */}
+                                <button
+                                  onClick={() => setAddExpenseTo(item)}
+                                  className="w-full py-2.5 text-xs text-teal-600 hover:bg-teal-50 border-t border-gray-200 transition-colors font-medium"
+                                >
+                                  + Agregar gasto
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     );
                   })}
                 </tbody>
               </table>
 
-              {/* Add item row */}
+              {/* Add APU item row */}
               <button
                 onClick={() => setShowAddItem(true)}
                 className="w-full py-4 flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-teal-600 border-t border-dashed border-gray-200 hover:bg-gray-50 transition-colors"
@@ -250,6 +342,16 @@ export default function ProjectDetailPage() {
           projectId={id}
           onClose={() => setShowAddItem(false)}
           onAdded={() => { setShowAddItem(false); load(); }}
+        />
+      )}
+
+      {addExpenseTo && (
+        <ExpenseForm
+          projectId={id}
+          costItemId={addExpenseTo.id}
+          apuResources={addExpenseTo.apuItem?.lines.flatMap((l) => l.resource ? [l.resource] : []) ?? []}
+          onClose={() => setAddExpenseTo(null)}
+          onCreated={() => { setAddExpenseTo(null); load(); }}
         />
       )}
     </div>
