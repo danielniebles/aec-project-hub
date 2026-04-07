@@ -1,0 +1,17 @@
+services:
+  aec_db:
+    image: postgres:16-alpine
+    container_name: aec_project_hub_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aec_user
+      POSTGRES_PASSWORD: aec_pass
+      POSTGRES_DB: aec_project_hub
+    ports:
+      - "5433:5432"
+    volumes:
+      - aec_pgdata:/var/lib/postgresql/data
+
+volumes:
+  aec_pgdata:
+    name: aec_project_hub_pgdata
