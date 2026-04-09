@@ -15,6 +15,7 @@ export async function getProject(id: string) {
               lines: { include: { resource: true } },
             },
           },
+          resource: true,
           commitments: {
             include: {
               payments: { orderBy: { date: "asc" } },

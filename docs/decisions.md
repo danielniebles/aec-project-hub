@@ -80,6 +80,23 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 ---
 
+## ADR-009 — Three CostItem creation modes; APU-less items grouped under "Varios"
+
+**Decision:** `POST /api/projects/[id]/cost-items` accepts a `mode` field (`"apu"` | `"resource"` | `"manual"`). APU-less items (`apuItemId = null`) are rendered in a separate "Varios" section in the ledger. A `PATCH` endpoint allows assigning an APU to a manual item later.
+
+**Why:** Field managers often need to log a cost before the APU template exists, or for a single-resource purchase that doesn't warrant a full APU. Forcing an APU at entry time blocks real workflows. The three modes cover all cases:
+- `apu` — composite activity with AIU markup (existing behavior)
+- `resource` — single-resource purchase; price from catalog, no AIU
+- `manual` — free-form; user sets everything directly
+
+**Resource vs APU pricing:** Resource-based items intentionally have no AIU markup — they represent a raw purchase, not a composite activity. This matches how field managers think about direct material buys.
+
+**Backwards compatibility:** If `mode` is absent and `apuItemId` is present, the API falls back to `"apu"` mode so the old modal continues to work during rollout.
+
+**APU re-assignment:** When a manual item is assigned an APU via PATCH, `description`, `unit`, and `unitCostBudgeted` are all overwritten from the APU. The user is warned in the UI before confirming. `resourceId` is cleared.
+
+---
+
 ## Open Questions / TODOs
 
 | # | Question | Status |

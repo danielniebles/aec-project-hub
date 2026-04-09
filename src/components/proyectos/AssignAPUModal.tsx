@@ -9,70 +9,101 @@ type APUItem = {
   description: string;
   outputUnit: string;
   category: string;
-  lines: { resource: { prices: { price: string }[] }; quantity: string; wasteFactorPct: string }[];
+  lines: {
+    resource: { prices: { price: string }[] };
+    quantity: string;
+    wasteFactorPct: string;
+  }[];
   aiuAdminPct: string;
   aiuContingencyPct: string;
   aiuProfitPct: string;
 };
 
-interface Props {
-  projectId: string;
-  onClose: () => void;
-  onAdded: () => void;
-}
-
-function computeUnitPrice(item: APUItem): number {
+function computeAPUUnitPrice(item: APUItem): number {
   const direct = item.lines.reduce((sum, line) => {
     const price = line.resource.prices[0];
     if (!price) return sum;
-    return sum + Number(price.price) * Number(line.quantity) * (1 + Number(line.wasteFactorPct) / 100);
+    return (
+      sum +
+      Number(price.price) *
+        Number(line.quantity) *
+        (1 + Number(line.wasteFactorPct) / 100)
+    );
   }, 0);
-  const aiu = (Number(item.aiuAdminPct) + Number(item.aiuContingencyPct) + Number(item.aiuProfitPct)) / 100;
+  const aiu =
+    (Number(item.aiuAdminPct) +
+      Number(item.aiuContingencyPct) +
+      Number(item.aiuProfitPct)) /
+    100;
   return direct * (1 + aiu);
 }
 
-export default function AddAPUItemModal({ projectId, onClose, onAdded }: Props) {
+interface Props {
+  projectId: string;
+  costItemId: string;
+  currentDescription: string;
+  onClose: () => void;
+  onAssigned: () => void;
+}
+
+export default function AssignAPUModal({
+  projectId,
+  costItemId,
+  currentDescription,
+  onClose,
+  onAssigned,
+}: Props) {
   const [items, setItems] = useState<APUItem[]>([]);
   const [selected, setSelected] = useState<APUItem | null>(null);
-  const [quantity, setQuantity] = useState("1");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/apu-items").then((r) => r.json()).then(setItems);
   }, []);
 
-  async function handleAdd() {
+  async function handleAssign() {
     if (!selected) return;
     setSaving(true);
-    await fetch(`/api/projects/${projectId}/cost-items`, {
-      method: "POST",
+    await fetch(`/api/projects/${projectId}/cost-items/${costItemId}`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apuItemId: selected.id, quantity: parseFloat(quantity) }),
+      body: JSON.stringify({ apuItemId: selected.id }),
     });
     setSaving(false);
-    onAdded();
+    onAssigned();
   }
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[80vh]">
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">Agregar ítem APU al presupuesto</h2>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-gray-100">
+          <div>
+            <p className="text-xs text-gray-400 mb-0.5 truncate">{currentDescription}</p>
+            <h2 className="text-base font-bold text-gray-900">Asignar APU</h2>
+          </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
         </div>
 
+        {/* Warning */}
+        <div className="mx-6 mt-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
+          Esto reemplazará la descripción, unidad y precio unitario del ítem con los valores del APU seleccionado.
+        </div>
+
+        {/* APU list */}
         <div className="flex-1 overflow-auto px-6 py-4 space-y-2">
           {items.map((item) => {
-            const unitPrice = computeUnitPrice(item);
+            const unitPrice = computeAPUUnitPrice(item);
             const isSelected = selected?.id === item.id;
             return (
               <div
                 key={item.id}
                 onClick={() => setSelected(item)}
                 className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border"
-                style={isSelected
-                  ? { borderColor: "#0d9488", backgroundColor: "#f0fdfa" }
-                  : { borderColor: "transparent", backgroundColor: "#f9fafb" }
+                style={
+                  isSelected
+                    ? { borderColor: "#0d9488", backgroundColor: "#f0fdfa" }
+                    : { borderColor: "transparent", backgroundColor: "#f9fafb" }
                 }
               >
                 <div>
@@ -92,38 +123,20 @@ export default function AddAPUItemModal({ projectId, onClose, onAdded }: Props) 
           })}
         </div>
 
-        {selected && (
-          <div className="px-6 py-4 border-t border-gray-100">
-            <p className="text-xs text-gray-500 mb-2">
-              <span className="font-semibold text-teal-600">{selected.description}</span> — precio unitario: {formatCOP(computeUnitPrice(selected))}
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <label className="text-xs text-gray-500 font-medium">Cantidad ({selected.outputUnit})</label>
-                <input
-                  type="number" step="0.01" min="0.01"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
-                />
-              </div>
-              <div className="pt-5 text-sm text-gray-500">
-                = <span className="font-bold text-gray-800">{formatCOP(computeUnitPrice(selected) * parseFloat(quantity || "0"))}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="flex gap-3 px-6 pb-5">
+        {/* Footer */}
+        <div className="flex gap-3 px-6 pb-5 pt-4 border-t border-gray-100">
           <button
-            onClick={handleAdd}
+            onClick={handleAssign}
             disabled={!selected || saving}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40"
             style={{ backgroundColor: "#0d9488" }}
           >
-            {saving ? "Agregando..." : "Agregar al presupuesto"}
+            {saving ? "Asignando..." : "Asignar APU"}
           </button>
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600"
+          >
             Cancelar
           </button>
         </div>

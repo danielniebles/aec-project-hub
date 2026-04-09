@@ -45,10 +45,15 @@ A percentage added to a resource's quantity to account for material loss during 
 A billable engagement. Has a type (architecture, construction, civil, design-build), a lifecycle status (prospect → design → permitting → execution → closeout → closed), and a set of CostItems that form its budget.
 
 ### CostItem
-A single line in a project's budget. Created by selecting an APU template and specifying a quantity. At creation time, the APU unit price is **snapshotted** into `unitCostBudgeted` — this value never changes even if resource prices are updated later. The budgeted total is always `quantityBudgeted × unitCostBudgeted`.
+A single line in a project's budget. Can be created three ways:
+- **APU-based** — select an APU template + quantity; unit price is snapshotted with AIU markup applied
+- **Resource-based** — select a single resource + quantity; unit price snapshotted from the resource's latest price (no AIU)
+- **Manual** — provide description, unit, quantity, and unit cost directly; no APU or resource reference
+
+The budgeted total is always `quantityBudgeted × unitCostBudgeted`. APU-less items (resource or manual) appear under the **"Varios"** group in the ledger. A manual item can later be assigned an APU, which updates its description, unit, and re-snapshots the price.
 
 ### Unit Price Snapshot
-When a CostItem is created, the system computes the current APU unit price from live resource prices and stores it in `unitCostBudgeted`. This freezes the estimate at the moment of budget approval, preventing price drift from affecting historical budgets.
+When a CostItem is created, the unit price is computed from live prices and stored in `unitCostBudgeted`. This value never changes after creation, freezing the estimate at the moment of budget entry and preventing price drift.
 
 ### totalBudgeted
 Derived field (not stored): `quantityBudgeted × unitCostBudgeted` per CostItem.

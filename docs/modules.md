@@ -73,16 +73,18 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 **Components:**
 - `ProjectCard` — status-bordered card with budget total and APU item count
 - `ProjectForm` — create project modal
-- `AddAPUItemModal` — search APU templates, set quantity, preview total, add to budget
+- `AddCostItemModal` — 3-tab modal: APU (pick template + qty), Insumo directo (pick resource + qty, no AIU), Manual (free-form description/unit/qty/cost). Replaces `AddAPUItemModal`.
+- `AssignAPUModal` — APU picker shown when user clicks "Asignar APU" on a manual Varios item; updates description, unit, and re-snapshots price
 - `CommitmentForm` — modal with "Gasto simple" / "Compromiso" toggle. Simple mode creates a commitment + a matching payment in one request (`fullyPaid: true`). Commitment mode creates the commitment only; payments are added later via PaymentForm
 - `PaymentForm` — modal to add an abono to an existing commitment; shows pending balance as the max hint
 
 **Budget ledger (Presupuesto tab):**
-- Cost-ledger layout: commitments are primary rows, grouped under APU/CostItem headers
+- Cost-ledger layout: commitments are primary rows, grouped under CostItem headers
 - Summary chips: Presupuesto total | Comprometido | Pagado | Pendiente
-- APU group header: teal left border, APU code pill, description, commitment count, progress bar (paid / budgeted), "Agregar" button
+- **APU group headers**: teal APU code pill, description, commitment count, progress bar, "Agregar" button
+- **Varios section**: divider row + same group structure for APU-less items. Resource-linked items show a blue resource code pill; truly manual items show a gray "VARIOS" pill and an "Asignar APU" link
 - Commitment rows: status badge (Pagado / Parcial / Pendiente), description, date, Comprometido / Pagado / Pendiente amounts, optional resource tag, actions (Abonar, delete)
-- Payment sub-rows (expandable for Parcial/Pendiente commitments): numbered cards with date, amount, delete
+- Payment sub-rows (expandable): numbered cards with date, amount, delete
 
 **Server-side data function:** `src/lib/data/projects.ts → getProject(id)`
 - Queries Prisma directly; enriches each commitment with `totalPaid`, `totalPending`, `status` (all `number`, Decimals converted)
@@ -94,7 +96,8 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 - `GET /api/projects` — list with `totalBudgeted` and `totalCommitted` derived per project
 - `POST /api/projects` — create
 - `GET /api/projects/[id]` — full detail (kept for completeness; server component uses `getProject` directly)
-- `POST /api/projects/[id]/cost-items` — add APU item to budget; snapshots unit price at creation
+- `POST /api/projects/[id]/cost-items` — create budget line; body: `{ mode: "apu"|"resource"|"manual", ... }`; snapshots unit price at creation
+- `PATCH /api/projects/[id]/cost-items/[costItemId]` — assign APU to a Varios item; body: `{ apuItemId }`
 - `DELETE /api/projects/[id]/cost-items?costItemId=` — remove budget line
 - `POST /api/projects/[id]/commitments` — create commitment; body: `{ costItemId, description, date, totalCommitted, resourceId?, notes?, fullyPaid, paidDate }`
 - `DELETE /api/projects/[id]/commitments?commitmentId=` — delete commitment (payments cascade)
@@ -111,6 +114,7 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 | `src/lib/format.ts` | `formatCOP(n)` — `es-CO` currency. `formatDate(s)` — `es-CO` short date |
 | `src/lib/projectStatus.ts` | `STATUS_LABEL`, `STATUS_BADGE` (Tailwind classes), `STATUS_BORDER`, `TYPE_LABEL` maps |
 | `src/lib/data/projects.ts` | `getProject(id)` — server-side Prisma query with full enrichment; called directly by Server Components |
+| `src/lib/apu.ts` | `computeUnitPrice(apuItemId)` — shared helper; queries Prisma for APU lines + resource prices, applies AIU markup |
 
 ---
 

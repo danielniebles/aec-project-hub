@@ -34,6 +34,7 @@ model Resource {
   prices      ResourcePrice[]
   apuLines    APULine[]
   commitments Commitment[]
+  costItems   CostItem[]
 }
 
 enum PriceSourceType {
@@ -148,6 +149,7 @@ model CostItem {
   id               String       @id @default(uuid())
   projectId        String
   apuItemId        String?
+  resourceId       String?
   category         CostCategory
   description      String
   unit             String
@@ -159,6 +161,7 @@ model CostItem {
 
   project          Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   apuItem          APUItem?     @relation(fields: [apuItemId], references: [id])
+  resource         Resource?    @relation(fields: [resourceId], references: [id])
   commitments      Commitment[]
 }
 

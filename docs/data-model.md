@@ -99,18 +99,26 @@ One resource within an APU template.
 ---
 
 ### CostItem
-A budget line inside a project. Always linked to an APU template.
+A budget line inside a project. Can be backed by an APU template, a single resource, or created manually.
 
 | Field             | Type          | Notes                                                        |
 |-------------------|---------------|--------------------------------------------------------------|
 | id                | UUID PK       |                                                              |
 | projectId         | FK → Project  | Cascade delete                                               |
-| apuItemId         | FK → APUItem? | Optional — future versions may allow manual budget lines     |
+| apuItemId         | FK → APUItem? | Set when created from an APU template; null for resource/manual items |
+| resourceId        | FK → Resource? | Set when created from a single resource; null otherwise      |
 | category          | CostCategory  | `labor \| materials \| equipment \| subcontractor \| design_fees \| admin_permits \| transport \| other` |
-| description       | String        | Copied from APUItem at creation                              |
-| unit              | String        | Copied from APUItem at creation                              |
-| quantityBudgeted  | Decimal(12,4) | How many units of the APU are budgeted                       |
-| unitCostBudgeted  | Decimal(15,2) | **Snapshotted** APU unit price at creation time — immutable  |
+| description       | String        | From APU/resource at creation, or user-provided for manual items |
+| unit              | String        | From APU/resource at creation, or user-provided for manual items |
+| quantityBudgeted  | Decimal(12,4) | How many units are budgeted                                  |
+| unitCostBudgeted  | Decimal(15,2) | **Snapshotted** price at creation time — immutable           |
+
+**Creation modes:**
+- `apu` — `apuItemId` set, price computed via `computeUnitPrice()` (with AIU markup)
+- `resource` — `resourceId` set, price snapshotted from latest `ResourcePrice` (no AIU)
+- `manual` — both null, user provides description, unit, and unit cost directly
+
+**APU re-assignment:** A manual (`apuItemId = null`) item can later be assigned an APU via `PATCH /api/projects/[id]/cost-items/[costItemId]`. This updates `apuItemId`, `description`, `unit`, and re-snapshots `unitCostBudgeted`. Clears `resourceId`.
 
 **Derived (not stored):**
 - `totalBudgeted = quantityBudgeted × unitCostBudgeted`
