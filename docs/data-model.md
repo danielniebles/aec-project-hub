@@ -9,8 +9,9 @@ Schema lives in `prisma/schema.prisma`. Database: PostgreSQL 16 (Docker, port 54
 ```
 Resource ──< ResourcePrice
 Resource ──< APULine >── APUItem ──< CostItem >── Project
-                                    CostItem ──< ProjectExpense
-Resource ──< ProjectExpense (optional resource mapping)
+                                    CostItem ──< Commitment ──< Payment
+Resource ──< Commitment (optional resource mapping)
+Project  ──< Commitment
 ```
 
 ---
@@ -113,37 +114,42 @@ A budget line inside a project. Always linked to an APU template.
 
 **Derived (not stored):**
 - `totalBudgeted = quantityBudgeted × unitCostBudgeted`
-- `totalExecuted = Σ expenses.total`
-- `variance = totalExecuted − totalBudgeted`
+- `totalCommitted = Σ commitment.totalCommitted`
+- `totalPaid = Σ commitment.totalPaid`
+- `totalPending = Σ commitment.totalPending`
 
 ---
 
-### ProjectExpense
-A real cost entry recorded during execution. The CostItem is always the budget anchor.
+### Commitment
+An agreed spend against a CostItem — either a simple fully-paid expense or a multi-installment contract with a provider. Replaces `ProjectExpense`.
 
-| Field       | Type              | Notes                                              |
-|-------------|-------------------|----------------------------------------------------|
-| id          | UUID PK           |                                                    |
-| projectId   | String            | Denormalized for query convenience                 |
-| costItemId  | FK → CostItem     | Cascade delete — budget anchor                     |
-| resourceId  | FK → Resource?    | Optional — maps spend to a specific APU resource   |
-| description | String            | Free text, e.g. "FERREMAX materiales"              |
-| date        | DateTime          |                                                    |
-| quantity    | Decimal(12,4)?    | Optional breakdown                                 |
-| unit        | String?           | Optional breakdown                                 |
-| unitCost    | Decimal(15,2)?    | Optional breakdown                                 |
-| total       | Decimal(15,2)     | Required. Auto-computed if qty × unitCost provided |
-| receiptUrl  | String?           | Reserved for future file attachment                |
-| notes       | String?           |                                                    |
+| Field          | Type              | Notes                                              |
+|----------------|-------------------|----------------------------------------------------|
+| id             | UUID PK           |                                                    |
+| projectId      | FK → Project      | Denormalized for query convenience. Cascade delete |
+| costItemId     | FK → CostItem     | Cascade delete — budget anchor                     |
+| resourceId     | FK → Resource?    | Optional — maps spend to a specific APU resource   |
+| description    | String            | Free text, e.g. "FERREMAX materiales"              |
+| date           | DateTime          | Commitment date (contract or purchase date)        |
+| totalCommitted | Decimal(15,2)     | Total agreed amount                                |
+| notes          | String?           | Reference number, contract ID, etc.                |
+
+**Derived (not stored):**
+- `totalPaid = Σ payment.amount`
+- `totalPending = max(0, totalCommitted − totalPaid)`
+- `status = totalPaid === 0 → "Pendiente" | totalPaid >= totalCommitted → "Pagado" | else → "Parcial"`
+
+A "simple expense" (paid in full) is created as a Commitment with `fullyPaid: true`, which auto-creates one Payment equaling `totalCommitted`.
 
 ---
 
-## Planned Model Changes
+### Payment
+A partial or full disbursement against a Commitment.
 
-### Commitment + Abono (next iteration)
-To support partial payments, `ProjectExpense` will either be extended or replaced with:
-- `Commitment` — total agreed amount with a provider (`description`, `date`, `total`, `costItemId`, `resourceId?`)
-- `Abono` — partial payment against a commitment (`commitmentId`, `date`, `amount`)
-
-A simple expense (paid in full) would be a Commitment with a single Abono equaling the total.
-Status (`Pagado / Parcial / Pendiente`) is derived: `Σ abonos.amount` vs `commitment.total`.
+| Field        | Type              | Notes                              |
+|--------------|-------------------|------------------------------------|
+| id           | UUID PK           |                                    |
+| commitmentId | FK → Commitment   | Cascade delete                     |
+| date         | DateTime          | Payment date                       |
+| amount       | Decimal(15,2)     | Amount paid in this installment    |
+| notes        | String?           | e.g. "Transferencia #12345"        |

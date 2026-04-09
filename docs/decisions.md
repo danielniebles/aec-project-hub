@@ -14,21 +14,21 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 ---
 
-## ADR-002 — totalExecuted derived, not stored
+## ADR-002 — Execution totals derived, not stored
 
-**Decision:** `CostItem.totalExecuted` is not a column in the database. It is always computed as `Σ ProjectExpense.total` at query time.
+**Decision:** `totalPaid`, `totalPending`, and `status` on a Commitment are never stored as columns. They are always computed from `Σ payment.amount` at query time and enriched server-side in `getProject`.
 
-**Why:** Storing a running total would require keeping it in sync with every expense insert/delete, introducing consistency risk. Summing at query time is always accurate and the dataset per CostItem is small enough to make this cost negligible.
+**Why:** Storing running totals requires keeping them in sync with every payment insert/delete, introducing consistency risk. Summing at query time is always accurate, and the payment count per commitment is small.
 
 ---
 
-## ADR-003 — ProjectExpense uses CostItem as the budget anchor, not APUItem
+## ADR-003 — Commitment uses CostItem as the budget anchor, not APUItem
 
-**Decision:** Expenses are linked to `CostItem` (the project's budget line), not directly to `APUItem` (the template).
+**Decision:** Commitments are linked to `CostItem` (the project's budget line), not directly to `APUItem` (the template).
 
 **Why:** The same APU template can appear multiple times in a project with different quantities. Linking to `APUItem` would be ambiguous. The `CostItem` is the specific, quantified instance within the project.
 
-**Resource mapping:** An expense can optionally also link to a `Resource` (via `resourceId`) to indicate which specific material or labor type within the APU the spend relates to. This is optional metadata — the CostItem remains the budget anchor.
+**Resource mapping:** A commitment can optionally also link to a `Resource` (via `resourceId`) to indicate which specific material or labor type the spend relates to. This is optional metadata — the CostItem remains the budget anchor.
 
 ---
 
@@ -48,23 +48,35 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 ---
 
-## ADR-006 — Expense model does not yet support partial payments (commitments)
+## ADR-006 — ProjectExpense replaced by Commitment + Payment
 
-**Decision:** `ProjectExpense.total` is a single amount. There is no commitment/abono model yet.
+**Decision:** `ProjectExpense` was removed. Execution tracking now uses two tables: `Commitment` (the agreed total) and `Payment` (individual disbursements).
 
-**Why:** The partial payment requirement was identified during UI iteration. The POC validates the core budget tracking flow first. Modeling commitments adds schema complexity (new tables, status derivation logic) that will be designed based on the final UI direction.
+**Why:** A single-amount expense model cannot represent partial payments. Field managers often commit funds before paying, and contracts are frequently paid in installments. The new model handles both extremes: a simple fully-paid expense is a Commitment + one auto-created Payment; a phased contract creates one Commitment and payments are added as they occur.
 
-**Planned:** Replace or extend `ProjectExpense` with a `Commitment` + `Abono` model. A simple fully-paid expense would be a Commitment with one Abono. Status (`Pagado / Parcial / Pendiente`) derived from `Σ abonos` vs `commitment.total`. See `data-model.md` for the planned schema.
+**Simple vs commitment:** The `CommitmentForm` exposes this via a toggle. "Gasto simple" sends `fullyPaid: true` — the API creates both the Commitment and the matching Payment. "Compromiso" sends `fullyPaid: false` — only the Commitment is created; payments are added later.
 
 ---
 
-## ADR-007 — Budget execution view: cost-ledger over nested table
+## ADR-007 — Budget execution view: cost-ledger layout
 
-**Decision:** The next iteration of the budget execution view will use expenses/commitments as primary rows (grouped by APU), not the current APU-first table with hidden expense sub-rows.
+**Decision:** Commitments are the primary rows, grouped under APU/CostItem headers. Replaced the previous APU-first table with nested expense sub-rows.
 
-**Why:** The table-within-table pattern is hard to scan and buries the day-to-day data (actual costs) behind an interaction. Field managers add expenses constantly — those should be the primary content. APU items act as grouping headers with a progress indicator.
+**Why:** The table-within-table pattern buried day-to-day cost data behind an interaction. Field managers add commitments constantly — those should be the primary content. APU items serve as grouping headers with a progress bar (paid vs budgeted).
 
-**Current state:** The existing expandable-row implementation remains functional while the new design is validated in Stitch.
+**Status badges:** Pagado (green) | Parcial (amber) | Pendiente (slate). Status is derived server-side and sent as a string to the client.
+
+---
+
+## ADR-008 — Server Component + Suspense for project detail data fetching
+
+**Decision:** `proyectos/[id]/page.tsx` is an async Server Component. It calls `getProject(id)` (a Prisma query in `src/lib/data/projects.ts`) directly — no `fetch()` to an internal API route. The enriched project object is passed as a prop to `ProjectDetailClient` (`"use client"`). Mutations call `router.refresh()` to re-run the server component.
+
+**Why:** Eliminates the `useEffect + fetch + useState` pattern that caused "setState in render" warnings with React's concurrent rendering. Server Components can `await` Prisma directly, Suspense handles the loading state declaratively, and `router.refresh()` re-fetches without any client-side fetch wiring.
+
+**Type safety:** Client types are derived from the server function: `type ProjectDetail = Awaited<ReturnType<typeof getProject>>`. No separate type definitions to keep in sync.
+
+**Decimal conversion:** Prisma returns `Decimal` objects. All monetary fields are converted to `number` inside `getProject` before returning, so the client component only sees plain numbers.
 
 ---
 
@@ -72,7 +84,5 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 | # | Question | Status |
 |---|---|---|
-| TODO-14 | Can a single expense span multiple CostItems? (e.g. one invoice covers two APU activities) | Deferred |
-| TODO-15 | Should ProjectExpense have a direct `phaseId` field for phase-level tracking? | Deferred |
-| TODO-16 | Installment tracking: Commitment + Abono model — schema and UI finalized in next iteration | In design |
-| TODO-17 | Budget execution view redesign: cost-ledger layout (expenses as primary rows, grouped by APU) | In design |
+| TODO-14 | Can a single commitment span multiple CostItems? (e.g. one invoice covers two APU activities) | Deferred |
+| TODO-15 | Should Commitment have a direct `phaseId` field for phase-level tracking? | Deferred |

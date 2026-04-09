@@ -53,28 +53,36 @@ When a CostItem is created, the system computes the current APU unit price from 
 ### totalBudgeted
 Derived field (not stored): `quantityBudgeted × unitCostBudgeted` per CostItem.
 
-### totalExecuted
-Derived field (not stored): sum of all `ProjectExpense.total` records linked to a CostItem.
-
-### variance
-`totalExecuted − totalBudgeted`. Positive = over budget. Negative = under budget.
+### totalCommitted / totalPaid / totalPending
+Derived fields (not stored) per CostItem, aggregated from its Commitments and Payments.
 
 ---
 
 ## Execution Tracking
 
-### ProjectExpense
-A real cost entry recorded during project execution. Always belongs to a CostItem (the budget anchor). Can optionally reference a specific Resource from the APU lines — this links the spend to a specific material or labor type for more granular tracking.
+### Commitment
+A real cost entry recorded during project execution. Represents a total agreed amount with a provider. Always belongs to a CostItem (the budget anchor). Can optionally reference a specific Resource from the APU lines.
 
 Key fields:
-- `description` — free text (e.g. "FERREMAX materiales semana 3", "Pago jornales")
-- `date` — when the cost was incurred
-- `total` — the amount (required)
-- `quantity`, `unit`, `unitCost` — optional breakdown; if provided, total is auto-computed as `quantity × unitCost`
-- `resourceId` — optional mapping to an APU resource
+- `description` — free text (e.g. "FERREMAX materiales semana 3", "Contrato Movimiento Tierras")
+- `date` — commitment date (contract or purchase date)
+- `totalCommitted` — total agreed amount
+- `resourceId` — optional mapping to a specific APU resource
+- `notes` — reference number, contract ID, etc.
 
-### Commitment / Abono (Planned — not yet built)
-Some expenses are not paid in full upfront. A **commitment** represents the total agreed amount with a provider; **abonos** are partial payments against it. This model is planned as the next iteration of ProjectExpense.
+A **simple expense** (fully paid upfront) is a Commitment with one Payment equaling `totalCommitted`. Created by selecting "Gasto simple" in the UI.
+
+### Payment (Abono)
+A partial or full disbursement against a Commitment. One Commitment can have multiple Payments.
+
+- `amount` — amount paid in this installment
+- `date` — payment date
+- `notes` — e.g. "Transferencia #12345"
+
+**Derived status per Commitment:**
+- `Pendiente` — no payments yet
+- `Parcial` — some payments, total paid < totalCommitted
+- `Pagado` — total paid ≥ totalCommitted
 
 ---
 

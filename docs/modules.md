@@ -68,26 +68,38 @@ Create and manage APU templates. Detail page shows resource lines, AIU inputs, a
 ### Proyectos (`/proyectos`, `/proyectos/[id]`)
 Project list with status filter cards. Detail page has tab navigation (Resumen, Presupuesto, Fases, Contratos) — only Presupuesto is built.
 
+**Data fetching pattern:** `proyectos/[id]/page.tsx` is an async Server Component. It calls `getProject(id)` from `src/lib/data/projects.ts` directly (no HTTP fetch), wraps the result in `<Suspense>`, and passes the enriched project to `ProjectDetailClient` as a prop. Mutations use `router.refresh()` to re-run the server component and get fresh data.
+
 **Components:**
 - `ProjectCard` — status-bordered card with budget total and APU item count
 - `ProjectForm` — create project modal
 - `AddAPUItemModal` — search APU templates, set quantity, preview total, add to budget
-- `ExpenseForm` — log execution expense against a CostItem; optional resource mapping
+- `CommitmentForm` — modal with "Gasto simple" / "Compromiso" toggle. Simple mode creates a commitment + a matching payment in one request (`fullyPaid: true`). Commitment mode creates the commitment only; payments are added later via PaymentForm
+- `PaymentForm` — modal to add an abono to an existing commitment; shows pending balance as the max hint
 
-**Budget table (Presupuesto tab):**
-- Each row = one CostItem (APU code, description, unit, budgeted qty, unit cost, total budgeted, total executed, variance indicator)
-- Rows are independently expandable (multiple can be open simultaneously)
-- Expanded panel shows expense sub-table + "Agregar gasto" button per CostItem
+**Budget ledger (Presupuesto tab):**
+- Cost-ledger layout: commitments are primary rows, grouped under APU/CostItem headers
+- Summary chips: Presupuesto total | Comprometido | Pagado | Pendiente
+- APU group header: teal left border, APU code pill, description, commitment count, progress bar (paid / budgeted), "Agregar" button
+- Commitment rows: status badge (Pagado / Parcial / Pendiente), description, date, Comprometido / Pagado / Pendiente amounts, optional resource tag, actions (Abonar, delete)
+- Payment sub-rows (expandable for Parcial/Pendiente commitments): numbered cards with date, amount, delete
+
+**Server-side data function:** `src/lib/data/projects.ts → getProject(id)`
+- Queries Prisma directly; enriches each commitment with `totalPaid`, `totalPending`, `status` (all `number`, Decimals converted)
+- Enriches each costItem with `totalBudgeted`, `totalCommitted`, `totalPaid`, `totalPending`
+- Returns project-level aggregates: `totalPresupuesto`, `totalComprometido`, `totalPagado`, `totalPendiente`
+- Type exported as `ProjectDetail = Awaited<ReturnType<typeof getProject>>`
 
 **API:**
-- `GET /api/projects` — list with `totalBudgeted` and `totalExecuted` derived per project
+- `GET /api/projects` — list with `totalBudgeted` and `totalCommitted` derived per project
 - `POST /api/projects` — create
-- `GET /api/projects/[id]` — full detail: CostItems with APU lines + resources + expenses. Derives `totalBudgeted`, `totalExecuted`, `variance` per CostItem
+- `GET /api/projects/[id]` — full detail (kept for completeness; server component uses `getProject` directly)
 - `POST /api/projects/[id]/cost-items` — add APU item to budget; snapshots unit price at creation
 - `DELETE /api/projects/[id]/cost-items?costItemId=` — remove budget line
-- `GET /api/projects/[id]/cost-items/[costItemId]/expenses` — list expenses
-- `POST /api/projects/[id]/cost-items/[costItemId]/expenses` — log expense
-- `DELETE /api/projects/[id]/cost-items/[costItemId]/expenses?expenseId=` — remove expense
+- `POST /api/projects/[id]/commitments` — create commitment; body: `{ costItemId, description, date, totalCommitted, resourceId?, notes?, fullyPaid, paidDate }`
+- `DELETE /api/projects/[id]/commitments?commitmentId=` — delete commitment (payments cascade)
+- `POST /api/projects/[id]/commitments/[commitmentId]/payments` — add payment; body: `{ date, amount, notes? }`
+- `DELETE /api/projects/[id]/commitments/[commitmentId]/payments?paymentId=` — delete a single payment
 
 ---
 
@@ -98,6 +110,7 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 | `src/lib/prisma.ts` | Singleton Prisma client with dev hot-reload cache |
 | `src/lib/format.ts` | `formatCOP(n)` — `es-CO` currency. `formatDate(s)` — `es-CO` short date |
 | `src/lib/projectStatus.ts` | `STATUS_LABEL`, `STATUS_BADGE` (Tailwind classes), `STATUS_BORDER`, `TYPE_LABEL` maps |
+| `src/lib/data/projects.ts` | `getProject(id)` — server-side Prisma query with full enrichment; called directly by Server Components |
 
 ---
 
