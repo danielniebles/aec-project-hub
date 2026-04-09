@@ -33,7 +33,7 @@ model Resource {
 
   prices      ResourcePrice[]
   apuLines    APULine[]
-  expenses    ProjectExpense[]
+  commitments Commitment[]
 }
 
 enum PriceSourceType {
@@ -126,6 +126,7 @@ model Project {
   updatedAt   DateTime      @updatedAt
 
   costItems   CostItem[]
+  commitments Commitment[]
 }
 
 // ─────────────────────────────────────────────
@@ -158,25 +159,34 @@ model CostItem {
 
   project          Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   apuItem          APUItem?     @relation(fields: [apuItemId], references: [id])
-  expenses         ProjectExpense[]
+  commitments      Commitment[]
 }
 
-model ProjectExpense {
-  id          String    @id @default(uuid())
-  projectId   String
-  costItemId  String
-  resourceId  String?
-  description String
-  date        DateTime
-  quantity    Decimal?  @db.Decimal(12, 4)
-  unit        String?
-  unitCost    Decimal?  @db.Decimal(15, 2)
-  total       Decimal   @db.Decimal(15, 2)
-  receiptUrl  String?
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Commitment {
+  id             String       @id @default(uuid())
+  projectId      String
+  costItemId     String
+  resourceId     String?
+  description    String
+  date           DateTime
+  totalCommitted Decimal      @db.Decimal(15, 2)
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  costItem    CostItem  @relation(fields: [costItemId], references: [id], onDelete: Cascade)
-  resource    Resource? @relation(fields: [resourceId], references: [id])
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  costItem       CostItem     @relation(fields: [costItemId], references: [id], onDelete: Cascade)
+  resource       Resource?    @relation(fields: [resourceId], references: [id])
+  payments       Payment[]
+}
+
+model Payment {
+  id           String     @id @default(uuid())
+  commitmentId String
+  date         DateTime
+  amount       Decimal    @db.Decimal(15, 2)
+  notes        String?
+  createdAt    DateTime   @default(now())
+
+  commitment   Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
 }

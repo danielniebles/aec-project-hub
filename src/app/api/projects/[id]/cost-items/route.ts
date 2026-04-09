@@ -64,15 +64,16 @@ export async function POST(
       unitCostBudgeted: unitPrice,
       notes: `Precio unitario fijado al ${new Date().toLocaleDateString("es-CO")}`,
     },
-    include: { apuItem: true, expenses: true },
+    include: { apuItem: true, commitments: true },
   });
 
   return NextResponse.json(
     {
       ...costItem,
       totalBudgeted: Number(costItem.quantityBudgeted) * Number(costItem.unitCostBudgeted),
-      totalExecuted: 0,
-      variance: 0,
+      totalCommitted: 0,
+      totalPaid: 0,
+      totalPending: 0,
     },
     { status: 201 }
   );

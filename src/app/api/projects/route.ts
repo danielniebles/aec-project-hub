@@ -6,7 +6,9 @@ export async function GET() {
     include: {
       costItems: {
         include: {
-          expenses: true,
+          commitments: {
+            include: { payments: true },
+          },
         },
       },
     },
@@ -18,14 +20,21 @@ export async function GET() {
       (sum, item) => sum + Number(item.quantityBudgeted) * Number(item.unitCostBudgeted),
       0
     );
-    const totalExecuted = p.costItems.reduce(
-      (sum, item) => sum + item.expenses.reduce((s, e) => s + Number(e.total), 0),
+    const totalComprometido = p.costItems.reduce(
+      (sum, item) => sum + item.commitments.reduce((s, c) => s + Number(c.totalCommitted), 0),
+      0
+    );
+    const totalPagado = p.costItems.reduce(
+      (sum, item) => sum + item.commitments.reduce(
+        (s, c) => s + c.payments.reduce((ps, pay) => ps + Number(pay.amount), 0), 0
+      ),
       0
     );
     return {
       ...p,
       totalBudgeted,
-      totalExecuted,
+      totalComprometido,
+      totalPagado,
       itemCount: p.costItems.length,
     };
   });

@@ -12,13 +12,19 @@ export async function GET(
       costItems: {
         include: {
           apuItem: {
-              include: {
-                lines: {
-                  include: { resource: true },
-                },
+            include: {
+              lines: {
+                include: { resource: true },
               },
             },
-          expenses: true,
+          },
+          commitments: {
+            include: {
+              payments: { orderBy: { date: "asc" } },
+              resource: true,
+            },
+            orderBy: { date: "desc" },
+          },
         },
         orderBy: { createdAt: "asc" },
       },
@@ -30,10 +36,29 @@ export async function GET(
     ...project,
     costItems: project.costItems.map((item) => {
       const totalBudgeted = Number(item.quantityBudgeted) * Number(item.unitCostBudgeted);
-      const totalExecuted = item.expenses.reduce((s, e) => s + Number(e.total), 0);
-      return { ...item, totalBudgeted, totalExecuted, variance: totalExecuted - totalBudgeted };
+
+      const commitments = item.commitments.map((c) => {
+        const totalPaid = c.payments.reduce((s, p) => s + Number(p.amount), 0);
+        const totalPending = Math.max(0, Number(c.totalCommitted) - totalPaid);
+        const status =
+          totalPaid === 0 ? "Pendiente"
+          : totalPaid >= Number(c.totalCommitted) ? "Pagado"
+          : "Parcial";
+        return { ...c, totalPaid, totalPending, status };
+      });
+
+      const totalCommitted = commitments.reduce((s, c) => s + Number(c.totalCommitted), 0);
+      const totalPaid = commitments.reduce((s, c) => s + c.totalPaid, 0);
+      const totalPending = commitments.reduce((s, c) => s + c.totalPending, 0);
+
+      return { ...item, commitments, totalBudgeted, totalCommitted, totalPaid, totalPending };
     }),
   };
 
-  return NextResponse.json(enriched);
+  const totalPresupuesto = enriched.costItems.reduce((s, i) => s + i.totalBudgeted, 0);
+  const totalComprometido = enriched.costItems.reduce((s, i) => s + i.totalCommitted, 0);
+  const totalPagado = enriched.costItems.reduce((s, i) => s + i.totalPaid, 0);
+  const totalPendiente = enriched.costItems.reduce((s, i) => s + i.totalPending, 0);
+
+  return NextResponse.json({ ...enriched, totalPresupuesto, totalComprometido, totalPagado, totalPendiente });
 }
