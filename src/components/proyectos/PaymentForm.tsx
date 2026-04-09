@@ -6,7 +6,7 @@ import { formatCOP } from "@/lib/format";
 type Commitment = {
   id: string;
   description: string;
-  totalCommitted: string;
+  totalCommitted: number;
   totalPaid: number;
   totalPending: number;
 };
