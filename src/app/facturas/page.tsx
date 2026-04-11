@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getInvoices } from "@/lib/data/invoices";
-import { formatCOP, formatDate } from "@/lib/format";
-import InvoiceStatusBadge from "@/components/billing/InvoiceStatusBadge";
+import { formatCOP } from "@/lib/format";
+import InvoiceTableClient from "@/components/billing/InvoiceTableClient";
 import PageHeader from "@/components/layout/PageHeader";
 
 export default async function FacturasPage() {
@@ -54,49 +54,7 @@ export default async function FacturasPage() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {invoices.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-400 text-sm">
-              Sin facturas registradas.
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">N° Factura</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Cliente</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Proyecto</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Emisión</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Vencimiento</th>
-                  <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.map((inv) => (
-                  <tr key={inv.id} className="border-b border-gray-50 hover:bg-gray-50">
-                    <td className="px-6 py-3 font-mono text-xs font-semibold text-gray-700">{inv.number}</td>
-                    <td className="px-6 py-3">
-                      <Link href={`/clientes/${inv.client.id}`} className="text-teal-600 hover:underline">
-                        {inv.client.name}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-3">
-                      <Link href={`/proyectos/${inv.project.id}`} className="text-gray-600 hover:text-teal-600">
-                        {inv.project.name}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-3 text-gray-500">{formatDate(inv.issueDate)}</td>
-                    <td className="px-6 py-3 text-gray-500">{formatDate(inv.dueDate)}</td>
-                    <td className="px-6 py-3 text-right font-semibold text-gray-800">{formatCOP(inv.total)}</td>
-                    <td className="px-6 py-3"><InvoiceStatusBadge status={inv.status} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <InvoiceTableClient invoices={invoices} />
       </div>
     </div>
   );

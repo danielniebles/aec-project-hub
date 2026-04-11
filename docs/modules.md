@@ -110,6 +110,68 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 
 ---
 
+### Clientes (`/clientes`, `/clientes/[id]`)
+Client list with search. Detail page shows client info cards, linked projects, and invoices.
+
+**Components:**
+- `ClientCard` — name, NIT, contact, email, payment term badge, project/invoice counts
+- `ClientForm` — create client modal; payment terms select with conditional `fixedDay` input (1–28)
+
+**API:**
+- `GET /api/clients` — list with `?search=`, `?active=`
+- `POST /api/clients`
+- `GET /api/clients/[id]`
+- `PATCH /api/clients/[id]`
+- `DELETE /api/clients/[id]` — rejected if client has linked projects or invoices
+
+---
+
+### Facturas (`/facturas`, `/facturas/nueva`)
+Invoice dashboard with KPI chips (Facturado / Recaudado / Vencido) and a full invoice table. New invoice form at `/facturas/nueva` with `?projectId=` prefill.
+
+**Invoice lifecycle:**
+```
+draft → [Enviar] → sent → [Marcar pagada] → paid
+                 ↘ overdue (set only by cron)
+```
+- **Enviar** — calls `POST /api/invoices/[id]/send`; sends `new_invoice` Resend template to `client.email`; sets `sentAt`; returns `suggestedProjectStatus: "closeout"` if project is in `execution`
+- **Marcar pagada** — `PATCH /api/invoices/[id]` with `{ status: "paid" }`; sets `paidAt`
+- **Notificar** — `POST /api/invoices/[id]/remind`; sends `payment_reminder` Resend template; enforces a 7-day cooldown via `reminderSentAt`; returns 429 with `nextAllowedAt` if in cooldown, 422 if client has no email
+- **Delete** — only allowed on `draft` invoices
+
+**Status suggestion pattern:** when Enviar returns `suggestedProjectStatus`, an inline amber banner appears with "Actualizar estado" + "Ignorar". User must accept explicitly — no silent auto-transitions.
+
+**Components:**
+- `InvoiceTableClient` — client component used by `/facturas/page.tsx`; receives `InvoiceItem[]` from Server Component; handles all row actions and inline reminder feedback
+- `InvoiceStatusBadge` — draft=gray | sent=blue | paid=green | overdue=red | void=slate
+- `InvoiceForm` — full-page form; client dropdown → project dropdown → optional PO dropdown; live due date preview using client-side `computeDueDate`; submits to `POST /api/invoices`
+- `StatusSuggestionBanner` — inline amber banner used in both `BillingTab` and `InvoiceTableClient`
+
+**API:**
+- `GET /api/invoices` — `?clientId=`, `?projectId=`, `?status=`, `?dueBefore=`
+- `POST /api/invoices` — computes `dueDate` from client payment terms; computes tax; auto-generates `internalRef` (INT-YYYY-NNN) atomically; defaults status to `draft`
+- `GET /api/invoices/[id]`
+- `PATCH /api/invoices/[id]` — rejects `status: "overdue"` (cron only); on `sent` returns `suggestedProjectStatus`
+- `DELETE /api/invoices/[id]` — draft only
+- `POST /api/invoices/[id]/send` — sends `new_invoice` email template; sets `status = "sent"`, `sentAt`
+- `POST /api/invoices/[id]/remind` — 7-day-gated manual reminder; sends `payment_reminder` email template
+- `POST /api/invoices/reminders` — cron route (Bearer `CRON_SECRET`); queries `status = sent AND dueDate ≤ today + 3 days AND (reminderSentAt IS NULL OR reminderSentAt < 7 days ago)`; sends `payment_reminder` to each eligible client; updates `reminderSentAt`; returns `{ sent, skipped, errors }`
+
+**Cron schedule (`vercel.json`):** `0 13 * * 1-5` — weekdays at 13:00 UTC (8:00 AM Bogotá).
+
+**Email templates (Resend):**
+- `new_invoice` — invoice issued notification; variables: `contact_name`, `project_name`, `project_code`, `invoice_description`, `issue_date`, `due_date`, `total_amount`, `internal_ref`
+- `payment_reminder` — payment reminder; variables: `contact_name`, `urgency_text`, `invoice_number`, `project_name`, `project_code`, `invoice_description`, `due_date`, `total_amount`, `internal_ref`; `urgency_text` is computed server-side (e.g. "vence mañana", "vence en 3 días")
+
+**Facturación tab (project detail):** `BillingTab` renders inside `ProjectDetailClient` when the Facturación tab is active. Shows PO list + invoice list with the same row actions as `InvoiceTableClient`. Invoices are lazy-loaded via `GET /api/invoices?projectId=` on mount and reloaded after each mutation.
+
+**Purchase Orders:**
+- `GET /api/projects/[id]/purchase-orders`
+- `POST /api/projects/[id]/purchase-orders` — returns `suggestedStatus: "execution"` if project is in `prospect | design | permitting`
+- `DELETE /api/projects/[id]/purchase-orders/[poId]`
+
+---
+
 ## Shared Utilities
 
 | File | Purpose |
@@ -122,7 +184,8 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 | `src/lib/data/invoices.ts` | `getInvoices(filters)` — server-side invoice queries for the dashboard |
 | `src/lib/apu.ts` | `computeUnitPrice(apuItemId)` — shared helper; queries Prisma for APU lines + resource prices, applies AIU markup |
 | `src/lib/billing.ts` | `computeDueDate(issueDate, client)` — payment term → due date; `generateInternalRef(tx, year)` — atomic INT-YYYY-NNN sequence |
-| `src/lib/email.ts` | Resend wrappers: `sendInvoiceSentEmail`, `sendReminderEmail` — both send directly to `client.email` |
+| `src/lib/email.ts` | Resend wrappers: `sendInvoiceSentEmail` (template `new_invoice`), `sendReminderEmail` (template `payment_reminder`) — both send directly to `client.email`; silent skip if email is null |
+| `scripts/test-email.ts` | Manual email test script: `npx tsx scripts/test-email.ts <template_id>` — sends to hardcoded address with sample variables; no arg = plain HTML connectivity check |
 
 ---
 

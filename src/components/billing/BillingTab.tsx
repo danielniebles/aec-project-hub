@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatCOP, formatDate } from "@/lib/format";
 import PurchaseOrderForm from "@/components/billing/PurchaseOrderForm";
@@ -18,36 +18,114 @@ type Props = {
 
 type PO = Project["purchaseOrders"][number];
 
+type InvoiceRow = {
+  id: string;
+  number: string;
+  internalRef: string;
+  status: string;
+  issueDate: string;
+  dueDate: string;
+  total: number;
+  description: string;
+  reminderSentAt: string | null;
+  purchaseOrder: { number: string } | null;
+};
+
+type ReminderFeedback = {
+  type: "success" | "cooldown" | "no_email";
+  nextAllowedAt?: Date;
+};
+
 export default function BillingTab({ project, onRefresh, onStatusChange }: Props) {
   const [showPOForm, setShowPOForm] = useState(false);
   const [suggestedStatus, setSuggestedStatus] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<InvoiceRow[] | null>(null);
   const [loadingInvoices, setLoadingInvoices] = useState(false);
+  const [invoiceBusy, setInvoiceBusy] = useState<string | null>(null);
+  const [reminderFeedback, setReminderFeedback] = useState<Record<string, ReminderFeedback>>({});
 
-  type InvoiceRow = {
-    id: string;
-    number: string;
-    internalRef: string;
-    status: string;
-    issueDate: string;
-    dueDate: string;
-    total: number;
-    description: string;
-    purchaseOrder: { number: string } | null;
-  };
-
-  // Lazy-load invoices on mount
-  if (invoices === null && !loadingInvoices) {
+  const loadInvoices = useCallback(() => {
     setLoadingInvoices(true);
     fetch(`/api/invoices?projectId=${project.id}`)
       .then((r) => r.json())
       .then((data: InvoiceRow[]) => setInvoices(data))
       .finally(() => setLoadingInvoices(false));
-  }
+  }, [project.id]);
+
+  useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
 
   async function handleAcceptStatus(newStatus: string) {
     await onStatusChange(newStatus);
     setSuggestedStatus(null);
+  }
+
+  async function handleSendInvoice(inv: InvoiceRow) {
+    setInvoiceBusy(inv.id);
+    try {
+      const res = await fetch(`/api/invoices/${inv.id}/send`, { method: "POST" });
+      const data = await res.json();
+      if (data.suggestedProjectStatus) setSuggestedStatus(data.suggestedProjectStatus);
+      loadInvoices();
+    } finally {
+      setInvoiceBusy(null);
+    }
+  }
+
+  async function handleMarkPaid(id: string) {
+    setInvoiceBusy(id);
+    try {
+      await fetch(`/api/invoices/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "paid" }),
+      });
+      loadInvoices();
+    } finally {
+      setInvoiceBusy(null);
+    }
+  }
+
+  async function handleRemind(id: string) {
+    setInvoiceBusy(id);
+    try {
+      const res = await fetch(`/api/invoices/${id}/remind`, { method: "POST" });
+      const data = await res.json();
+      if (res.status === 429) {
+        setReminderFeedback((prev) => ({
+          ...prev,
+          [id]: { type: "cooldown", nextAllowedAt: new Date(data.nextAllowedAt) },
+        }));
+      } else if (res.status === 422) {
+        setReminderFeedback((prev) => ({ ...prev, [id]: { type: "no_email" } }));
+      } else {
+        setReminderFeedback((prev) => ({
+          ...prev,
+          [id]: { type: "success", nextAllowedAt: new Date(data.nextAllowedAt) },
+        }));
+      }
+    } finally {
+      setInvoiceBusy(null);
+    }
+  }
+
+  async function handleDeleteInvoice(id: string) {
+    setInvoiceBusy(id);
+    try {
+      await fetch(`/api/invoices/${id}`, { method: "DELETE" });
+      loadInvoices();
+    } finally {
+      setInvoiceBusy(null);
+    }
+  }
+
+  function dismissReminderFeedback(id: string) {
+    setReminderFeedback((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   const hasClient = !!project.clientId;
@@ -155,20 +233,104 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Vencimiento</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</th>
+                <th className="px-6 py-3"></th>
               </tr>
             </thead>
             <tbody>
-              {(invoices ?? []).map((inv) => (
-                <tr key={inv.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="px-6 py-3 font-mono text-xs font-semibold text-gray-700">{inv.number}</td>
-                  <td className="px-6 py-3 font-mono text-xs text-gray-400">{inv.internalRef}</td>
-                  <td className="px-6 py-3 text-gray-600 max-w-xs truncate">{inv.description}</td>
-                  <td className="px-6 py-3 text-gray-500">{formatDate(new Date(inv.issueDate))}</td>
-                  <td className="px-6 py-3 text-gray-500">{formatDate(new Date(inv.dueDate))}</td>
-                  <td className="px-6 py-3 text-right font-semibold text-gray-800">{formatCOP(inv.total)}</td>
-                  <td className="px-6 py-3"><InvoiceStatusBadge status={inv.status} /></td>
-                </tr>
-              ))}
+              {(invoices ?? []).map((inv) => {
+                const feedback = reminderFeedback[inv.id];
+                const isBusy = invoiceBusy === inv.id;
+                return (
+                  <React.Fragment key={inv.id}>
+                    <tr className="border-b border-gray-50 hover:bg-gray-50">
+                      <td className="px-6 py-3 font-mono text-xs font-semibold text-gray-700">{inv.number}</td>
+                      <td className="px-6 py-3 font-mono text-xs text-gray-400">{inv.internalRef}</td>
+                      <td className="px-6 py-3 text-gray-600 max-w-xs truncate">{inv.description}</td>
+                      <td className="px-6 py-3 text-gray-500">{formatDate(new Date(inv.issueDate))}</td>
+                      <td className="px-6 py-3 text-gray-500">{formatDate(new Date(inv.dueDate))}</td>
+                      <td className="px-6 py-3 text-right font-semibold text-gray-800">{formatCOP(inv.total)}</td>
+                      <td className="px-6 py-3"><InvoiceStatusBadge status={inv.status} /></td>
+                      <td className="px-6 py-3">
+                        <div className="flex items-center gap-2 justify-end">
+                          {inv.status === "draft" && (
+                            <>
+                              <button
+                                onClick={() => handleSendInvoice(inv)}
+                                disabled={isBusy}
+                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
+                                style={{ backgroundColor: "#0d9488" }}
+                              >
+                                Enviar
+                              </button>
+                              <button
+                                onClick={() => handleDeleteInvoice(inv.id)}
+                                disabled={isBusy}
+                                className="text-gray-300 hover:text-red-400 transition-colors disabled:opacity-50"
+                                title="Eliminar borrador"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </>
+                          )}
+                          {(inv.status === "sent" || inv.status === "overdue") && (
+                            <>
+                              <button
+                                onClick={() => handleMarkPaid(inv.id)}
+                                disabled={isBusy}
+                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
+                                style={{ backgroundColor: "#0d9488" }}
+                              >
+                                Marcar pagada
+                              </button>
+                              <button
+                                onClick={() => handleRemind(inv.id)}
+                                disabled={isBusy}
+                                className="px-2.5 py-1 rounded text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                              >
+                                Notificar
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    {feedback && (
+                      <tr className="border-b border-gray-50 bg-gray-50">
+                        <td colSpan={7} className="px-6 py-2 text-xs">
+                          {feedback.type === "success" && (
+                            <span className="text-teal-600">
+                              Recordatorio enviado.{" "}
+                              {feedback.nextAllowedAt && <>Próximo disponible: {formatDate(feedback.nextAllowedAt)}</>}
+                            </span>
+                          )}
+                          {feedback.type === "cooldown" && (
+                            <span className="text-amber-600">
+                              Período de espera activo.{" "}
+                              {feedback.nextAllowedAt && <>Próximo recordatorio disponible el {formatDate(feedback.nextAllowedAt)}</>}
+                            </span>
+                          )}
+                          {feedback.type === "no_email" && (
+                            <span className="text-red-500">El cliente no tiene email registrado.</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-2 text-right">
+                          <button
+                            onClick={() => dismissReminderFeedback(inv.id)}
+                            className="text-gray-300 hover:text-gray-500"
+                            aria-label="Cerrar"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         )}
