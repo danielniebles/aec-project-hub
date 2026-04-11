@@ -268,7 +268,6 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
                                 title="Eliminar borrador"
                               >
                                 <Trash2 size={16} />
-                                </svg>
                               </button>
                             </>
                           )}

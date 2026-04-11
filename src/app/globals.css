@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-manrope);
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }

@@ -41,7 +41,7 @@ export default function APULineTable({ lines, onRemove }: Props) {
   if (lines.length === 0) {
     return (
       <div className="px-5 py-8 text-center text-gray-400 text-sm">
-        Sin insumos agregados. Usa "+ Agregar insumo" para comenzar.
+        Sin insumos agregados. Usa &quot;+ Agregar insumo&quot; para comenzar.
       </div>
     );
   }

@@ -320,7 +320,11 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
   function toggleCommitment(commitmentId: string) {
     setExpandedCommitments((prev) => {
       const next = new Set(prev);
-      next.has(commitmentId) ? next.delete(commitmentId) : next.add(commitmentId);
+      if (next.has(commitmentId)) {
+        next.delete(commitmentId);
+      } else {
+        next.add(commitmentId);
+      }
       return next;
     });
   }
@@ -349,7 +353,6 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
   }
 
   const badge = STATUS_BADGE[project.status] ?? "bg-gray-100 text-gray-600";
-  const statusLabel = STATUS_LABEL[project.status] ?? project.status;
   const typeLabel = TYPE_LABEL[project.type] ?? project.type;
 
   async function handleStatusChange(newStatus: string) {
@@ -584,7 +587,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                         colSpan={9}
                         className="px-5 py-10 text-center text-gray-400 text-sm"
                       >
-                        Sin ítems de presupuesto. Usa "Nuevo ítem" para agregar actividades.
+                        Sin ítems de presupuesto. Usa &quot;Nuevo ítem&quot; para agregar actividades.
                       </td>
                     </tr>
                   )}
