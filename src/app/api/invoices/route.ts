@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { InvoiceStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { computeDueDate, generateInternalRef } from "@/lib/billing";
+import { serializeInvoice } from "@/lib/constants";
 
 export async function GET(req: NextRequest) {
   const p = req.nextUrl.searchParams;
+
+  const rawStatus = p.get("status");
+  const status =
+    rawStatus && Object.values(InvoiceStatus).includes(rawStatus as InvoiceStatus)
+      ? (rawStatus as InvoiceStatus)
+      : undefined;
 
   const invoices = await prisma.invoice.findMany({
     where: {
       ...(p.get("clientId") && { clientId: p.get("clientId")! }),
       ...(p.get("projectId") && { projectId: p.get("projectId")! }),
-      ...(p.get("status") && { status: p.get("status") as never }),
+      ...(status && { status }),
       ...(p.get("dueBefore") && { dueDate: { lte: new Date(p.get("dueBefore")!) } }),
     },
     include: {
@@ -20,15 +28,7 @@ export async function GET(req: NextRequest) {
     orderBy: { issueDate: "desc" },
   });
 
-  return NextResponse.json(
-    invoices.map((inv) => ({
-      ...inv,
-      subtotal: Number(inv.subtotal),
-      taxPct: Number(inv.taxPct),
-      taxAmount: Number(inv.taxAmount),
-      total: Number(inv.total),
-    }))
-  );
+  return NextResponse.json(invoices.map(serializeInvoice));
 }
 
 export async function POST(req: NextRequest) {
@@ -87,14 +87,5 @@ export async function POST(req: NextRequest) {
     });
   });
 
-  return NextResponse.json(
-    {
-      ...invoice,
-      subtotal: Number(invoice.subtotal),
-      taxPct: Number(invoice.taxPct),
-      taxAmount: Number(invoice.taxAmount),
-      total: Number(invoice.total),
-    },
-    { status: 201 }
-  );
+  return NextResponse.json(serializeInvoice(invoice), { status: 201 });
 }

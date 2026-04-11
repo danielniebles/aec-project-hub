@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-const SUGGEST_CLOSEOUT_STATUSES = ["execution"];
+import { serializeInvoice, SUGGEST_CLOSEOUT_STATUSES } from "@/lib/constants";
 
 export async function GET(
   _req: NextRequest,
@@ -20,13 +19,7 @@ export async function GET(
 
   if (!invoice) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  return NextResponse.json({
-    ...invoice,
-    subtotal: Number(invoice.subtotal),
-    taxPct: Number(invoice.taxPct),
-    taxAmount: Number(invoice.taxAmount),
-    total: Number(invoice.total),
-  });
+  return NextResponse.json(serializeInvoice(invoice));
 }
 
 export async function PATCH(
@@ -65,14 +58,7 @@ export async function PATCH(
     suggestedProjectStatus = "closeout";
   }
 
-  return NextResponse.json({
-    ...invoice,
-    subtotal: Number(invoice.subtotal),
-    taxPct: Number(invoice.taxPct),
-    taxAmount: Number(invoice.taxAmount),
-    total: Number(invoice.total),
-    suggestedProjectStatus,
-  });
+  return NextResponse.json({ ...serializeInvoice(invoice), suggestedProjectStatus });
 }
 
 export async function DELETE(

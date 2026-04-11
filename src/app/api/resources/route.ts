@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ResourceType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || "";
-  const type = searchParams.get("type") || "";
+  const rawType = searchParams.get("type") || "";
   const category = searchParams.get("category") || "";
+
+  const type =
+    rawType && Object.values(ResourceType).includes(rawType as ResourceType)
+      ? (rawType as ResourceType)
+      : undefined;
 
   const resources = await prisma.resource.findMany({
     where: {
@@ -16,7 +22,7 @@ export async function GET(req: NextRequest) {
           { code: { contains: search, mode: "insensitive" } },
         ],
       }),
-      ...(type && { type: type as never }),
+      ...(type && { type }),
       ...(category && { category: { contains: category, mode: "insensitive" } }),
     },
     include: {

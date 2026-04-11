@@ -22,7 +22,7 @@ export async function getClients(search?: string) {
 }
 
 export async function getClient(id: string) {
-  return prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
     where: { id },
     include: {
       projects: {
@@ -45,6 +45,11 @@ export async function getClient(id: string) {
       _count: { select: { projects: true, invoices: true } },
     },
   });
+  if (!client) return null;
+  return {
+    ...client,
+    invoices: client.invoices.map((inv) => ({ ...inv, total: Number(inv.total) })),
+  };
 }
 
 export type ClientList = Awaited<ReturnType<typeof getClients>>;

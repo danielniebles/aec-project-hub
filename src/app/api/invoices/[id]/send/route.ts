@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendInvoiceSentEmail } from "@/lib/email";
-
-const SUGGEST_CLOSEOUT_STATUSES = ["execution"];
+import { serializeInvoice, SUGGEST_CLOSEOUT_STATUSES } from "@/lib/constants";
 
 export async function POST(
   _req: NextRequest,
@@ -47,12 +46,5 @@ export async function POST(
       ? "closeout"
       : null;
 
-  return NextResponse.json({
-    ...updated,
-    subtotal: Number(updated.subtotal),
-    taxPct: Number(updated.taxPct),
-    taxAmount: Number(updated.taxAmount),
-    total: Number(updated.total),
-    suggestedProjectStatus,
-  });
+  return NextResponse.json({ ...serializeInvoice(updated), suggestedProjectStatus });
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { formatCOP } from "@/lib/format";
+import { computeAPUUnitPrice } from "@/lib/apuCalc";
 
 type APUItem = {
   id: string;
@@ -19,25 +20,6 @@ type APUItem = {
   aiuContingencyPct: string;
   aiuProfitPct: string;
 };
-
-function computeAPUUnitPrice(item: APUItem): number {
-  const direct = item.lines.reduce((sum, line) => {
-    const price = line.resource.prices[0];
-    if (!price) return sum;
-    return (
-      sum +
-      Number(price.price) *
-        Number(line.quantity) *
-        (1 + Number(line.wasteFactorPct) / 100)
-    );
-  }, 0);
-  const aiu =
-    (Number(item.aiuAdminPct) +
-      Number(item.aiuContingencyPct) +
-      Number(item.aiuProfitPct)) /
-    100;
-  return direct * (1 + aiu);
-}
 
 interface Props {
   projectId: string;

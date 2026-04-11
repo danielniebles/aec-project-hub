@@ -32,13 +32,7 @@ export default function ProyectosPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <PageHeader title="">
-        <input
-          type="text"
-          placeholder="Buscar proyecto..."
-          className="border border-gray-200 rounded-lg px-4 py-1.5 text-sm w-64 focus:outline-none focus:border-teal-500"
-        />
-      </PageHeader>
+      <PageHeader title="" />
 
       <div className="flex-1 overflow-auto px-8 py-6">
         {/* Title row */}

@@ -15,18 +15,27 @@ const PAYMENT_TERM_LABELS: Record<string, string> = {
   fixed_day: "Día fijo del mes",
 };
 
+const INITIAL_FORM = {
+  name: "",
+  taxId: "",
+  email: "",
+  phone: "",
+  address: "",
+  contactName: "",
+  paymentTermType: "net30",
+  fixedDay: "10",
+  notes: "",
+};
+
 export default function ClientForm({ onClose, onCreated }: Props) {
-  const [name, setName] = useState("");
-  const [taxId, setTaxId] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [paymentTermType, setPaymentTermType] = useState("net30");
-  const [fixedDay, setFixedDay] = useState("10");
-  const [notes, setNotes] = useState("");
+  const [form, setForm] = useState(INITIAL_FORM);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  function field<K extends keyof typeof INITIAL_FORM>(key: K) {
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm((f) => ({ ...f, [key]: e.target.value }));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,10 +46,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, taxId, email, phone, address, contactName,
-          paymentTermType,
-          fixedDay: paymentTermType === "fixed_day" ? Number(fixedDay) : undefined,
-          notes,
+          ...form,
+          fixedDay: form.paymentTermType === "fixed_day" ? Number(form.fixedDay) : undefined,
         }),
       });
       const data = await res.json();
@@ -64,12 +71,12 @@ export default function ClientForm({ onClose, onCreated }: Props) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-7 pb-0 space-y-4">
+        <form id="client-form" onSubmit={handleSubmit} className="px-7 pb-0 space-y-4">
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Nombre o razón social</label>
             <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={form.name}
+              onChange={field("name")}
               placeholder="Ej. Constructora El Dorado S.A.S."
               required
               className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
@@ -80,8 +87,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">NIT</label>
               <input
-                value={taxId}
-                onChange={(e) => setTaxId(e.target.value)}
+                value={form.taxId}
+                onChange={field("taxId")}
                 placeholder="900.123.456-7"
                 className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
               />
@@ -89,8 +96,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Contacto</label>
               <input
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
+                value={form.contactName}
+                onChange={field("contactName")}
                 placeholder="Nombre del contacto"
                 className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
               />
@@ -102,8 +109,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={form.email}
+                onChange={field("email")}
                 placeholder="facturacion@cliente.com"
                 className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
               />
@@ -111,8 +118,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Teléfono</label>
               <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={form.phone}
+                onChange={field("phone")}
                 placeholder="+57 300 000 0000"
                 className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
               />
@@ -122,8 +129,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Dirección</label>
             <input
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              value={form.address}
+              onChange={field("address")}
               placeholder="Cra. 7 # 32-16, Bogotá"
               className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
             />
@@ -133,8 +140,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Condición de pago</label>
               <select
-                value={paymentTermType}
-                onChange={(e) => setPaymentTermType(e.target.value)}
+                value={form.paymentTermType}
+                onChange={field("paymentTermType")}
                 className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
               >
                 {Object.entries(PAYMENT_TERM_LABELS).map(([v, l]) => (
@@ -142,13 +149,13 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                 ))}
               </select>
             </div>
-            {paymentTermType === "fixed_day" && (
+            {form.paymentTermType === "fixed_day" && (
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Día del mes (1–28)</label>
                 <input
                   type="number"
-                  value={fixedDay}
-                  onChange={(e) => setFixedDay(e.target.value)}
+                  value={form.fixedDay}
+                  onChange={field("fixedDay")}
                   min="1"
                   max="28"
                   className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
@@ -160,8 +167,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Notas</label>
             <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              value={form.notes}
+              onChange={field("notes")}
               rows={2}
               className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500 resize-none"
             />
@@ -175,7 +182,8 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             Cancelar
           </button>
           <button
-            onClick={handleSubmit as never}
+            type="submit"
+            form="client-form"
             disabled={saving}
             className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50"
             style={{ backgroundColor: "#0d9488" }}

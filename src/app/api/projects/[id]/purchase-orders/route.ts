@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-const SUGGEST_EXECUTION_STATUSES = ["prospect", "design", "permitting"];
+import { SUGGEST_EXECUTION_STATUSES } from "@/lib/constants";
 
 export async function GET(
   _req: NextRequest,
