@@ -107,7 +107,17 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 **Auto-numbering implementation:** `generateInternalRef(tx, year)` uses a PostgreSQL `INSERT ... ON CONFLICT DO UPDATE ... RETURNING` inside a Prisma transaction against the `InvoiceSequence` table. This is atomic and gap-safe — voided invoices leave gaps in the sequence, which is standard accounting behavior.
 
-**Status lifecycle:** `draft → sent → paid`. `overdue` is set only by the cron route (`POST /api/invoices/reminders`) — the user-facing PATCH rejects it. This keeps status transitions intentional and prevents accidental state corruption.
+**Status lifecycle:** `draft → sent → paid`. Transitions are driven by UI action buttons and enforced by the API layer:
+
+| Transition | UI trigger | API call | Side effect |
+|---|---|---|---|
+| `draft → sent` | "Enviar" button | `POST /api/invoices/[id]/send` | Sends `new_invoice` email; sets `sentAt` |
+| `sent → paid` | "Marcar pagada" button | `PATCH /api/invoices/[id]` `{ status: "paid" }` | Sets `paidAt` |
+| `sent/overdue → overdue` | Cron only — no UI button | `POST /api/invoices/reminders` | Sets `overdue` in bulk for past-due invoices |
+
+"Notificar" does **not** change status — it sends a `payment_reminder` email and records `reminderSentAt` for cooldown tracking only.
+
+The user-facing PATCH rejects `status: "overdue"` explicitly. This prevents accidental state corruption and keeps the `overdue` transition a server-side concern.
 
 **Status suggestion pattern:** When a PO is added to a pre-execution project, the API returns `suggestedStatus: "execution"`. When an invoice is sent from an execution-stage project, the API returns `suggestedStatus: "closeout"`. The client shows a `StatusSuggestionBanner` (inline, not toast) — the user must accept or dismiss. This avoids silent auto-transitions that could surprise the user.
 

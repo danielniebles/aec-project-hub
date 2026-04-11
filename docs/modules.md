@@ -139,7 +139,12 @@ draft → [Enviar] → sent → [Marcar pagada] → paid
 - **Notificar** — `POST /api/invoices/[id]/remind`; sends `payment_reminder` Resend template; enforces a 7-day cooldown via `reminderSentAt`; returns 429 with `nextAllowedAt` if in cooldown, 422 if client has no email
 - **Delete** — only allowed on `draft` invoices
 
-**Status suggestion pattern:** when Enviar returns `suggestedProjectStatus`, an inline amber banner appears with "Actualizar estado" + "Ignorar". User must accept explicitly — no silent auto-transitions.
+**Status suggestion pattern:** certain billing events return a `suggestedProjectStatus` that triggers an inline amber banner ("Actualizar estado" / "Ignorar"). The user must accept explicitly — no silent auto-transitions.
+
+| Billing event | API endpoint | Project must be in | Suggested project status |
+|---|---|---|---|
+| Purchase Order added | `POST /api/projects/[id]/purchase-orders` | `prospect`, `design`, `permitting` | `execution` |
+| Invoice sent | `POST /api/invoices/[id]/send` | `execution` | `closeout` |
 
 **Components:**
 - `InvoiceTableClient` — client component used by `/facturas/page.tsx`; receives `InvoiceItem[]` from Server Component; handles all row actions and inline reminder feedback
@@ -193,7 +198,7 @@ draft → [Enviar] → sent → [Marcar pagada] → paid
 
 - **Sidebar:** dark (`#1a1d23`), teal active item (`#0d9488`)
 - **Modals:** `fixed inset-0 bg-black/40 backdrop-blur-sm` backdrop, white `rounded-2xl` panel
-- **Icons:** inline SVGs (no icon library installed). Do not use emoji or unicode symbols for functional icons.
+- **Icons:** `lucide-react` — `<Icon size={N} strokeWidth={1.75} />`. Do not use inline SVGs, emoji, or unicode symbols for functional icons.
 - **Buttons:** primary = teal `#0d9488` with white text, secondary = white with `border-gray-200`
 - **Type badges:** `material`=teal, `labor`=blue, `equipment`=gray, `transport`=purple
 - **Status badges:** defined in `projectStatus.ts`
