@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 
 interface Props {
   onClose: () => void;
@@ -54,7 +55,7 @@ export default function APUForm({ onClose, onCreated }: Props) {
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-gray-800">Nueva plantilla APU</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">

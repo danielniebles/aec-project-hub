@@ -3,6 +3,7 @@
 import { useState, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronDown, ChevronRight, Trash2, X, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import AddCostItemModal from "@/components/proyectos/AddCostItemModal";
 import AssignAPUModal from "@/components/proyectos/AssignAPUModal";
@@ -25,31 +26,6 @@ const STATUS_BADGE_COMMITMENT: Record<CommitmentStatus, string> = {
   Pendiente: "bg-slate-100 text-slate-600",
 };
 
-const IconChevronDown = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-  </svg>
-);
-const IconChevronRight = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-  </svg>
-);
-const IconTrash = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-  </svg>
-);
-const IconX = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-  </svg>
-);
-const IconPlus = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-  </svg>
-);
 
 // ── Shared CostItem group row renderer ────────────────────────────────────────
 
@@ -149,14 +125,14 @@ function ItemGroup({
                 className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
                 style={{ backgroundColor: "#0d9488" }}
               >
-                <IconPlus /> Agregar
+                <Plus size={16} /> Agregar
               </button>
               <button
                 onClick={() => onRemoveItem(item.id)}
                 className="text-gray-300 hover:text-red-400 transition-colors"
                 title="Eliminar ítem"
               >
-                <IconTrash />
+                <Trash2 size={16} />
               </button>
             </div>
           </div>
@@ -185,7 +161,7 @@ function ItemGroup({
                     onClick={() => onToggle(c.id)}
                     className="text-gray-400 hover:text-teal-600 transition-colors"
                   >
-                    {isExpanded ? <IconChevronDown /> : <IconChevronRight />}
+                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </button>
                 )}
               </td>
@@ -246,7 +222,7 @@ function ItemGroup({
                     className="text-gray-300 hover:text-red-400 transition-colors ml-1"
                     title="Eliminar"
                   >
-                    <IconTrash />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </td>
@@ -290,7 +266,7 @@ function ItemGroup({
                             className="text-gray-300 hover:text-red-400 transition-colors"
                             title="Eliminar abono"
                           >
-                            <IconX />
+                            <X size={14} />
                           </button>
                         </div>
                       </div>
@@ -478,7 +454,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
               style={{ backgroundColor: "#0d9488" }}
             >
-              <IconPlus /> Nuevo ítem
+              <Plus size={16} /> Nuevo ítem
             </button>
           </div>
         </div>
@@ -648,7 +624,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 onClick={() => setShowAddItem(true)}
                 className="w-full py-4 flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-teal-600 border-t border-dashed border-gray-200 hover:bg-gray-50 transition-colors"
               >
-                <IconPlus /> Agregar ítem al presupuesto
+                <Plus size={16} /> Agregar ítem al presupuesto
               </button>
             </div>
 

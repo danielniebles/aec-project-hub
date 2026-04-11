@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 
 type Props = {
   onClose: () => void;
@@ -60,7 +61,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             <h2 className="text-xl font-bold text-gray-900">Nuevo cliente</h2>
             <p className="text-sm text-gray-400 mt-0.5">Ingrese los datos del cliente o firma.</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none mt-1">×</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-7 pb-0 space-y-4">

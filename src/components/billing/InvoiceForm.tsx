@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { computeDueDate } from "@/lib/billing";
 import { formatCOP } from "@/lib/format";
@@ -227,9 +228,7 @@ export default function InvoiceForm() {
 
             {computedDueDate && (
               <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 rounded-lg text-xs text-amber-700">
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Calendar size={16} className="shrink-0" />
                 Fecha de vencimiento calculada: <strong>{computedDueDate.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" })}</strong>
               </div>
             )}

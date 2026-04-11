@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 import { STATUS_LABEL, TYPE_LABEL } from "@/lib/projectStatus";
 
 interface Props {
@@ -44,7 +45,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
               <h2 className="text-xl font-bold text-gray-900">Nuevo proyecto</h2>
               <p className="text-sm text-gray-400 mt-0.5">Ingrese los detalles técnicos para iniciar el presupuesto.</p>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none mt-1">×</button>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { formatCOP } from "@/lib/format";
 
 type Resource = {
@@ -64,7 +65,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg flex flex-col max-h-[80vh]">
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-200">
           <h2 className="text-base font-semibold text-gray-800">Agregar insumo a APU</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
         {/* Resource search */}

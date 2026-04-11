@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { formatCOP } from "@/lib/format";
 
 // ── APU tab types ─────────────────────────────────────────────────────────────
@@ -175,7 +176,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100">
           <h2 className="text-base font-bold text-gray-900">Agregar ítem al presupuesto</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
         {/* Tab bar */}

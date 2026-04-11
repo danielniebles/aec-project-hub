@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X, Plus } from "lucide-react";
 import { Resource } from "@/app/catalogo/page";
 import { formatCOP, formatDate } from "@/lib/format";
 
@@ -68,7 +69,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
           <h2 className="text-base font-semibold text-gray-800">Detalle de Precios</h2>
           <p className="text-teal-600 text-sm font-medium mt-0.5">{resource.description}</p>
         </div>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg leading-none mt-1">×</button>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
       </div>
 
       {/* Price history */}
@@ -198,7 +199,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
             className="flex items-center justify-center gap-2 w-full py-3 rounded text-sm font-medium text-white"
             style={{ backgroundColor: "#0d9488" }}
           >
-            <span>+</span> Agregar precio
+            <Plus size={14} /> Agregar precio
           </button>
         </div>
       )}

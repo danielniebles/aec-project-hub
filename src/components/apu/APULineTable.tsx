@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import { APULine } from "@/app/plantillas-apu/[id]/page";
 import { formatCOP } from "@/lib/format";
 
@@ -90,7 +91,7 @@ export default function APULineTable({ lines, onRemove }: Props) {
                   className="text-gray-300 hover:text-red-400 transition-colors text-base leading-none"
                   title="Eliminar línea"
                 >
-                  ×
+                  <Trash2 size={15} />
                 </button>
               </td>
             </tr>

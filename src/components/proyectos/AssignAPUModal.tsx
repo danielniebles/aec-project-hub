@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { formatCOP } from "@/lib/format";
 
 type APUItem = {
@@ -82,7 +83,7 @@ export default function AssignAPUModal({
             <p className="text-xs text-gray-400 mb-0.5 truncate">{currentDescription}</p>
             <h2 className="text-base font-bold text-gray-900">Asignar APU</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
 
         {/* Warning */}

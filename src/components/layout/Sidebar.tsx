@@ -2,23 +2,30 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Briefcase,
+  Building2,
+  Receipt,
+  Package,
+  Layers,
+  Settings,
+  HelpCircle,
+  Plus,
+} from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: "▦" },
-  { href: "/proyectos", label: "Proyectos", icon: "◈" },
-  { href: "/clientes", label: "Clientes", icon: "◫" },
-  { href: "/facturas", label: "Facturas", icon: "▤" },
-  { href: "/cotizaciones", label: "Cotizaciones", icon: "▤" },
-  { href: "/catalogo", label: "Catálogo de insumos", icon: "▤" },
-  { href: "/plantillas-apu", label: "Plantillas APU", icon: "≡" },
-  { href: "/proveedores", label: "Proveedores", icon: "◫" },
-  { href: "/gastos-generales", label: "Gastos generales", icon: "▦" },
-  { href: "/reportes", label: "Reportes", icon: "▦" },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/proyectos", label: "Proyectos", icon: Briefcase },
+  { href: "/clientes", label: "Clientes", icon: Building2 },
+  { href: "/facturas", label: "Facturas", icon: Receipt },
+  { href: "/catalogo", label: "Catálogo de insumos", icon: Package },
+  { href: "/plantillas-apu", label: "Plantillas APU", icon: Layers },
 ];
 
 const bottomItems = [
-  { href: "/configuracion", label: "Configuración", icon: "⚙" },
-  { href: "/ayuda", label: "Ayuda", icon: "?" },
+  { href: "/configuracion", label: "Configuración", icon: Settings },
+  { href: "/ayuda", label: "Ayuda", icon: HelpCircle },
 ];
 
 export default function Sidebar() {
@@ -43,6 +50,7 @@ export default function Sidebar() {
       <nav className="flex-1 px-2 py-4 space-y-0.5">
         {navItems.map((item) => {
           const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
@@ -53,7 +61,7 @@ export default function Sidebar() {
                 color: active ? "#ffffff" : "#9ca3af",
               }}
             >
-              <span className="text-base w-4 text-center">{item.icon}</span>
+              <Icon size={16} strokeWidth={1.75} />
               <span>{item.label}</span>
             </Link>
           );
@@ -67,23 +75,26 @@ export default function Sidebar() {
           className="flex items-center justify-center gap-2 w-full py-2 rounded text-sm font-medium text-white transition-colors"
           style={{ backgroundColor: "#0d9488" }}
         >
-          <span>+</span>
+          <Plus size={16} />
           <span>Nuevo Proyecto</span>
         </Link>
       </div>
 
       {/* Bottom nav */}
       <div className="px-2 pb-4 space-y-0.5 border-t border-white/10 pt-4">
-        {bottomItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 px-3 py-2 rounded text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            <span className="text-base w-4 text-center">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
+        {bottomItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-3 px-3 py-2 rounded text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              <Icon size={16} strokeWidth={1.75} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </div>
     </aside>
   );
