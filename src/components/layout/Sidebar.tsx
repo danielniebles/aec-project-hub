@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/", label: "Dashboard", icon: "▦" },
   { href: "/proyectos", label: "Proyectos", icon: "◈" },
+  { href: "/clientes", label: "Clientes", icon: "◫" },
+  { href: "/facturas", label: "Facturas", icon: "▤" },
   { href: "/cotizaciones", label: "Cotizaciones", icon: "▤" },
   { href: "/catalogo", label: "Catálogo de insumos", icon: "▤" },
   { href: "/plantillas-apu", label: "Plantillas APU", icon: "≡" },

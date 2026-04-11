@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const clientId = req.nextUrl.searchParams.get("clientId");
+
   const projects = await prisma.project.findMany({
+    where: clientId ? { clientId } : undefined,
     include: {
       costItems: {
         include: {

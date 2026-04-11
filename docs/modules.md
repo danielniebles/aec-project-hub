@@ -19,6 +19,10 @@
 | `/plantillas-apu/[id]` | APU detail & builder | Done |
 | `/proyectos` | Project list | Done |
 | `/proyectos/[id]` | Project detail + budget execution | Done |
+| `/clientes` | Client list | Done |
+| `/clientes/[id]` | Client detail (projects + invoices) | Done |
+| `/facturas` | Invoice dashboard | Done |
+| `/facturas/nueva` | New invoice form | Done |
 | `/cotizaciones` | Quotations | Not started |
 | `/proveedores` | Suppliers | Not started |
 | `/gastos-generales` | General overhead | Not started |
@@ -114,7 +118,11 @@ Project list with status filter cards. Detail page has tab navigation (Resumen, 
 | `src/lib/format.ts` | `formatCOP(n)` — `es-CO` currency. `formatDate(s)` — `es-CO` short date |
 | `src/lib/projectStatus.ts` | `STATUS_LABEL`, `STATUS_BADGE` (Tailwind classes), `STATUS_BORDER`, `TYPE_LABEL` maps |
 | `src/lib/data/projects.ts` | `getProject(id)` — server-side Prisma query with full enrichment; called directly by Server Components |
+| `src/lib/data/clients.ts` | `getClients(search?)`, `getClient(id)` — server-side client queries |
+| `src/lib/data/invoices.ts` | `getInvoices(filters)` — server-side invoice queries for the dashboard |
 | `src/lib/apu.ts` | `computeUnitPrice(apuItemId)` — shared helper; queries Prisma for APU lines + resource prices, applies AIU markup |
+| `src/lib/billing.ts` | `computeDueDate(issueDate, client)` — payment term → due date; `generateInternalRef(tx, year)` — atomic INT-YYYY-NNN sequence |
+| `src/lib/email.ts` | Resend wrappers: `sendInvoiceSentEmail`, `sendReminderEmail` — both send directly to `client.email` |
 
 ---
 

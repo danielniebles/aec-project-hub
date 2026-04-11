@@ -10,13 +10,14 @@ import CommitmentForm from "@/components/proyectos/CommitmentForm";
 import PaymentForm from "@/components/proyectos/PaymentForm";
 import { formatCOP, formatDate } from "@/lib/format";
 import { STATUS_LABEL, STATUS_BADGE, TYPE_LABEL } from "@/lib/projectStatus";
+import BillingTab from "@/components/billing/BillingTab";
 import type { ProjectDetail, CommitmentStatus } from "@/lib/data/projects";
 
 type Project = NonNullable<ProjectDetail>;
 type CostItem = Project["costItems"][number];
 type Commitment = CostItem["commitments"][number];
 
-const TABS = ["Resumen", "Presupuesto", "Fases", "Contratos"];
+const TABS = ["Resumen", "Presupuesto", "Fases", "Contratos", "Facturación"];
 
 const STATUS_BADGE_COMMITMENT: Record<CommitmentStatus, string> = {
   Pagado: "bg-green-100 text-green-700",
@@ -315,6 +316,26 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
   const [addPaymentTo, setAddPaymentTo] = useState<Commitment | null>(null);
   const [assignAPUTo, setAssignAPUTo] = useState<CostItem | null>(null);
   const [expandedCommitments, setExpandedCommitments] = useState<Set<string>>(new Set());
+  const [assigningClient, setAssigningClient] = useState(false);
+  const [clientOptions, setClientOptions] = useState<{ id: string; name: string }[]>([]);
+
+  async function openClientPicker() {
+    const res = await fetch("/api/clients");
+    const data = await res.json();
+    setClientOptions(data);
+    setAssigningClient(true);
+  }
+
+  async function handleAssignClient(clientId: string) {
+    setAssigningClient(false);
+    if (!clientId) return;
+    await fetch(`/api/projects/${project.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clientId }),
+    });
+    refresh();
+  }
 
   function refresh() {
     router.refresh();
@@ -355,6 +376,15 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
   const statusLabel = STATUS_LABEL[project.status] ?? project.status;
   const typeLabel = TYPE_LABEL[project.type] ?? project.type;
 
+  async function handleStatusChange(newStatus: string) {
+    await fetch(`/api/projects/${project.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    refresh();
+  }
+
   // Partition cost items: APU-backed vs misc (no APU)
   const apuItems = project.costItems.filter((i) => i.apuItemId !== null);
   const miscItems = project.costItems.filter((i) => i.apuItemId === null);
@@ -393,11 +423,15 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
-              <span
-                className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide ${badge}`}
+              <select
+                value={project.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500 ${badge}`}
               >
-                {statusLabel}
-              </span>
+                {Object.entries(STATUS_LABEL).map(([v, l]) => (
+                  <option key={v} value={v}>{l}</option>
+                ))}
+              </select>
             </div>
             <p className="text-sm text-gray-500 flex items-center gap-2">
               <span>{typeLabel}</span>
@@ -406,6 +440,32 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                   <span className="text-gray-300">|</span>
                   <span>{project.location}</span>
                 </>
+              )}
+              <span className="text-gray-300">|</span>
+              {project.client ? (
+                <Link href={`/clientes/${project.client.id}`} className="text-teal-600 hover:underline">
+                  {project.client.name}
+                </Link>
+              ) : assigningClient ? (
+                <select
+                  autoFocus
+                  defaultValue=""
+                  onChange={(e) => handleAssignClient(e.target.value)}
+                  onBlur={() => setAssigningClient(false)}
+                  className="border border-gray-200 rounded px-2 py-0.5 text-sm focus:outline-none focus:border-teal-500"
+                >
+                  <option value="" disabled>Seleccionar cliente...</option>
+                  {clientOptions.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <button
+                  onClick={openClientPicker}
+                  className="text-gray-400 italic hover:text-teal-600 transition-colors"
+                >
+                  + Asignar cliente
+                </button>
               )}
             </p>
           </div>
@@ -441,10 +501,18 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
           ))}
         </div>
 
-        {activeTab !== "Presupuesto" && (
+        {activeTab !== "Presupuesto" && activeTab !== "Facturación" && (
           <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
             Módulo en desarrollo — disponible próximamente.
           </div>
+        )}
+
+        {activeTab === "Facturación" && (
+          <BillingTab
+            project={project}
+            onRefresh={refresh}
+            onStatusChange={handleStatusChange}
+          />
         )}
 
         {activeTab === "Presupuesto" && (

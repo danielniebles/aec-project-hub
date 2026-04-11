@@ -126,8 +126,100 @@ model Project {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  costItems   CostItem[]
-  commitments Commitment[]
+  clientId       String?
+  client         Client?         @relation(fields: [clientId], references: [id])
+  costItems      CostItem[]
+  commitments    Commitment[]
+  purchaseOrders PurchaseOrder[]
+  invoices       Invoice[]
+}
+
+// ─────────────────────────────────────────────
+// MODULE 02 — Billing / AR
+// ─────────────────────────────────────────────
+
+enum PaymentTermType {
+  net30
+  net60
+  net90
+  fixed_day
+}
+
+enum InvoiceStatus {
+  draft
+  sent
+  paid
+  overdue
+  void
+}
+
+model Client {
+  id              String          @id @default(uuid())
+  name            String
+  taxId           String?         @unique
+  email           String?
+  phone           String?
+  address         String?
+  contactName     String?
+  paymentTermType PaymentTermType @default(net30)
+  fixedDay        Int?
+  notes           String?
+  active          Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  projects        Project[]
+  purchaseOrders  PurchaseOrder[]
+  invoices        Invoice[]
+}
+
+model PurchaseOrder {
+  id        String   @id @default(uuid())
+  number    String
+  clientId  String
+  projectId String
+  amount    Decimal  @db.Decimal(15, 2)
+  issueDate DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+
+  client    Client   @relation(fields: [clientId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invoices  Invoice[]
+
+  @@unique([clientId, number])
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  number          String        @unique
+  internalRef     String        @unique
+  clientId        String
+  projectId       String
+  purchaseOrderId String?
+  status          InvoiceStatus @default(draft)
+  issueDate       DateTime
+  dueDate         DateTime
+  subtotal        Decimal       @db.Decimal(15, 2)
+  taxPct          Decimal       @default(19) @db.Decimal(5, 2)
+  taxAmount       Decimal       @db.Decimal(15, 2)
+  total           Decimal       @db.Decimal(15, 2)
+  description     String
+  notes           String?
+  sentAt          DateTime?
+  paidAt          DateTime?
+  reminderSentAt  DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  client        Client         @relation(fields: [clientId], references: [id])
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+}
+
+model InvoiceSequence {
+  year    Int @id
+  lastSeq Int @default(0)
 }
 
 // ─────────────────────────────────────────────

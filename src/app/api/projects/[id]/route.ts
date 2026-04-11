@@ -62,3 +62,22 @@ export async function GET(
 
   return NextResponse.json({ ...enriched, totalPresupuesto, totalComprometido, totalPagado, totalPendiente });
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await req.json();
+  const { clientId, status } = body;
+
+  const project = await prisma.project.update({
+    where: { id },
+    data: {
+      ...(clientId !== undefined && { clientId: clientId || null }),
+      ...(status !== undefined && { status }),
+    },
+  });
+
+  return NextResponse.json(project);
+}

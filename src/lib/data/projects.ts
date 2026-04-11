@@ -8,6 +8,11 @@ export async function getProject(id: string) {
   const project = await prisma.project.findUnique({
     where: { id },
     include: {
+      client: true,
+      purchaseOrders: {
+        include: { client: { select: { id: true, name: true } } },
+        orderBy: { issueDate: "desc" },
+      },
       costItems: {
         include: {
           apuItem: {
@@ -78,5 +83,10 @@ export async function getProject(id: string) {
     totalComprometido,
     totalPagado,
     totalPendiente,
+    // Decimal conversion for purchaseOrder amounts
+    purchaseOrders: project.purchaseOrders.map((po) => ({
+      ...po,
+      amount: Number(po.amount),
+    })),
   };
 }
