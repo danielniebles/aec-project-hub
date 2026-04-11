@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatCOP } from "@/lib/format";
 
 type Resource = {
   id: string;
@@ -187,7 +188,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                   {mode === "simple" ? "Total a registrar:" : "Total comprometido:"}
                 </span>
                 <span className="float-right font-bold" style={{ color: "#0d9488" }}>
-                  {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(amount)}
+                  {formatCOP(amount)}
                 </span>
               </div>
             )}

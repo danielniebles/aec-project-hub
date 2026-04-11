@@ -127,7 +127,7 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
               <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: "#f0fdfa" }}>
                 <span className="text-gray-500">Abono a registrar:</span>
                 <span className="float-right font-bold" style={{ color: "#0d9488" }}>
-                  {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(amount)}
+                  {formatCOP(amount)}
                 </span>
               </div>
             )}

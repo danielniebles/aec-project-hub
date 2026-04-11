@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { formatCOP } from "@/lib/format";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM ?? "no-responder@terraazul.co";
@@ -23,10 +24,6 @@ type ProjectEmailData = {
   name: string;
   code: string;
 };
-
-function formatCOPEmail(n: number): string {
-  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(n);
-}
 
 function formatDateEmail(d: Date): string {
   return new Intl.DateTimeFormat("es-CO", { day: "numeric", month: "long", year: "numeric" }).format(new Date(d));
@@ -54,7 +51,7 @@ export async function sendInvoiceSentEmail(
         invoice_description: invoice.description,
         issue_date: formatDateEmail(invoice.issueDate),
         due_date: formatDateEmail(invoice.dueDate),
-        total_amount: formatCOPEmail(invoice.total),
+        total_amount: formatCOP(invoice.total),
         internal_ref: invoice.internalRef,
       },
     },
@@ -93,7 +90,7 @@ export async function sendReminderEmail(
         project_code: project.code,
         invoice_description: invoice.description,
         due_date: formatDateEmail(invoice.dueDate),
-        total_amount: formatCOPEmail(invoice.total),
+        total_amount: formatCOP(invoice.total),
         internal_ref: invoice.internalRef,
       },
     },
