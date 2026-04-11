@@ -142,7 +142,7 @@ function ItemGroup({
       {item.commitments.length === 0 && (
         <tr className="border-b border-gray-50">
           <td colSpan={9} className="px-8 py-4 text-xs text-gray-400 italic">
-            Sin registros. Usa "Agregar" para registrar el primer gasto.
+            Sin registros. Usa &quot;Agregar&quot; para registrar el primer gasto.
           </td>
         </tr>
       )}
@@ -398,7 +398,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 font-display">{project.name}</h1>
               <select
                 value={project.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
@@ -499,7 +499,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
                   Presupuesto
                 </p>
-                <p className="text-xl font-bold text-gray-900">
+                <p className="text-xl font-bold text-gray-900 font-display">
                   {formatCOP(project.totalPresupuesto)}
                 </p>
               </div>
@@ -507,7 +507,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
                   Comprometido
                 </p>
-                <p className="text-xl font-bold text-gray-900">
+                <p className="text-xl font-bold text-gray-900 font-display">
                   {formatCOP(project.totalComprometido)}
                 </p>
               </div>
@@ -521,7 +521,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 >
                   Pagado
                 </p>
-                <p className="text-xl font-bold" style={{ color: "#0d9488" }}>
+                <p className="text-xl font-bold font-display" style={{ color: "#0d9488" }}>
                   {formatCOP(project.totalPagado)}
                 </p>
               </div>
@@ -538,7 +538,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                   Pendiente
                 </p>
                 <p
-                  className={`text-xl font-bold ${
+                  className={`text-xl font-bold font-display ${
                     project.totalPendiente > 0 ? "text-amber-600" : "text-gray-900"
                   }`}
                 >

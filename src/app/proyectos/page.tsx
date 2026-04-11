@@ -44,7 +44,7 @@ export default function ProyectosPage() {
         {/* Title row */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Proyectos</h1>
+            <h1 className="text-3xl font-bold text-gray-900 font-display">Proyectos</h1>
             <p className="text-sm text-gray-400 mt-1">Gestiona y supervisa el estado financiero de tus obras.</p>
           </div>
           <button

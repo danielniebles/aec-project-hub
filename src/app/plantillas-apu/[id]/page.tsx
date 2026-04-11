@@ -111,7 +111,7 @@ export default function APUDetailPage() {
               <span className="text-gray-400">•</span>
               <span className="text-gray-500">{item.category}</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">{item.description}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 font-display">{item.description}</h1>
             <p className="text-gray-500 text-sm mt-1">
               Unidad de salida: <span className="font-medium text-gray-700">{item.outputUnit}</span>
             </p>

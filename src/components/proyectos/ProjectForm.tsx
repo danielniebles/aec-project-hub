@@ -42,7 +42,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
         <div className="px-7 pt-6 pb-4">
           <div className="flex items-start justify-between mb-1">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Nuevo proyecto</h2>
+              <h2 className="text-xl font-bold text-gray-900 font-display">Nuevo proyecto</h2>
               <p className="text-sm text-gray-400 mt-0.5">Ingrese los detalles técnicos para iniciar el presupuesto.</p>
             </div>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>

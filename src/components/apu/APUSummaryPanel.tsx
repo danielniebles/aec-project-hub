@@ -50,7 +50,7 @@ export default function APUSummaryPanel({ item, aiu }: Props) {
 
         <div className="bg-gray-800 rounded-lg p-4">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Precio Unitario Total</p>
-          <p className="text-3xl font-bold text-teal-400">{formatCOP(unitPrice)}</p>
+          <p className="text-3xl font-bold text-teal-400 font-display">{formatCOP(unitPrice)}</p>
           <p className="text-xs text-gray-500 mt-2">{priceSource}</p>
         </div>
       </div>

@@ -22,7 +22,7 @@ export default async function FacturasPage() {
       <div className="flex-1 overflow-auto px-8 py-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Facturas</h1>
+            <h1 className="text-2xl font-bold text-gray-900 font-display">Facturas</h1>
             <p className="text-sm text-gray-400 mt-0.5">{invoices.length} factura{invoices.length !== 1 ? "s" : ""}</p>
           </div>
           <Link
@@ -38,17 +38,17 @@ export default async function FacturasPage() {
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-xl p-5 shadow-sm">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Facturado</p>
-            <p className="text-xl font-bold text-gray-900">{formatCOP(totalFacturado)}</p>
+            <p className="text-xl font-bold text-gray-900 font-display">{formatCOP(totalFacturado)}</p>
           </div>
           <div className="bg-white rounded-xl p-5 shadow-sm border-l-4" style={{ borderColor: "#0d9488" }}>
             <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: "#0d9488" }}>Recaudado</p>
-            <p className="text-xl font-bold" style={{ color: "#0d9488" }}>{formatCOP(totalRecaudado)}</p>
+            <p className="text-xl font-bold font-display" style={{ color: "#0d9488" }}>{formatCOP(totalRecaudado)}</p>
           </div>
           <div className={`bg-white rounded-xl p-5 shadow-sm ${totalVencido > 0 ? "border-l-4 border-red-400" : ""}`}>
             <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${totalVencido > 0 ? "text-red-600" : "text-gray-400"}`}>
               Vencido
             </p>
-            <p className={`text-xl font-bold ${totalVencido > 0 ? "text-red-600" : "text-gray-900"}`}>
+            <p className={`text-xl font-bold font-display ${totalVencido > 0 ? "text-red-600" : "text-gray-900"}`}>
               {formatCOP(totalVencido)}
             </p>
           </div>

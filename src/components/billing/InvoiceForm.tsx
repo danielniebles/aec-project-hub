@@ -142,7 +142,7 @@ export default function InvoiceForm() {
           <span className="text-gray-600">Nueva factura</span>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Nueva factura</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6 font-display">Nueva factura</h1>
 
         <form onSubmit={handleSubmit} className="max-w-2xl space-y-5">
           {/* Client + Project */}

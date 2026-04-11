@@ -48,7 +48,7 @@ export default function ClientesPage() {
       <div className="flex-1 overflow-auto px-8 py-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
+            <h1 className="text-2xl font-bold text-gray-900 font-display">Clientes</h1>
             <p className="text-sm text-gray-400 mt-0.5">{clients.length} cliente{clients.length !== 1 ? "s" : ""} activo{clients.length !== 1 ? "s" : ""}</p>
           </div>
           <button

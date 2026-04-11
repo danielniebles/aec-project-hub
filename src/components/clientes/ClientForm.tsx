@@ -58,7 +58,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4">
         <div className="px-7 pt-6 pb-4 flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Nuevo cliente</h2>
+            <h2 className="text-xl font-bold text-gray-900 font-display">Nuevo cliente</h2>
             <p className="text-sm text-gray-400 mt-0.5">Ingrese los datos del cliente o firma.</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
