@@ -109,15 +109,16 @@ Captures the "why" behind non-obvious choices. Useful context for future iterati
 
 **Status lifecycle:** `draft → sent → paid`. Transitions are driven by UI action buttons and enforced by the API layer:
 
-| Transition | UI trigger | API call | Side effect |
+| Transition | Trigger | API call | Side effect |
 |---|---|---|---|
-| `draft → sent` | "Enviar" button | `POST /api/invoices/[id]/send` | Sends `new_invoice` email; sets `sentAt` |
+| `draft → sent` | "Enviar" button | `POST /api/invoices/[id]/send` | Sends `new_invoice` email to client; sets `sentAt` |
 | `sent → paid` | "Marcar pagada" button | `PATCH /api/invoices/[id]` `{ status: "paid" }` | Sets `paidAt` |
-| `sent/overdue → overdue` | Cron only — no UI button | `POST /api/invoices/reminders` | Sets `overdue` in bulk for past-due invoices |
 
-"Notificar" does **not** change status — it sends a `payment_reminder` email and records `reminderSentAt` for cooldown tracking only.
+The user-facing PATCH rejects `status: "overdue"` explicitly — `overdue` is reserved for future automated processing and cannot be set by the UI.
 
-The user-facing PATCH rejects `status: "overdue"` explicitly. This prevents accidental state corruption and keeps the `overdue` transition a server-side concern.
+**Cron behavior (weekdays 8 AM Bogotá):** `POST /api/invoices/reminders` does **not** change invoice status. It queries `status = sent AND dueDate ≤ today + 3 days AND (reminderSentAt IS NULL OR reminderSentAt < 7 days ago)`, sends a `payment_reminder` email to each eligible client's address, and updates `reminderSentAt`. Invoices without a client email are skipped and logged. Returns `{ sent, skipped, errors }`.
+
+"Notificar" (manual button) triggers the same email but goes through `POST /api/invoices/[id]/remind`, which enforces the same 7-day cooldown per invoice.
 
 **Status suggestion pattern:** When a PO is added to a pre-execution project, the API returns `suggestedStatus: "execution"`. When an invoice is sent from an execution-stage project, the API returns `suggestedStatus: "closeout"`. The client shows a `StatusSuggestionBanner` (inline, not toast) — the user must accept or dismiss. This avoids silent auto-transitions that could surprise the user.
 
