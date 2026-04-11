@@ -75,16 +75,14 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
             <button
               type="button"
               onClick={() => setMode("simple")}
-              className={`flex-1 py-2 transition-colors ${mode === "simple" ? "text-white" : "text-gray-500 hover:bg-gray-50"}`}
-              style={mode === "simple" ? { backgroundColor: "#0d9488" } : {}}
+              className={`flex-1 py-2 transition-colors ${mode === "simple" ? "text-white bg-primary" : "text-gray-500 hover:bg-gray-50"}`}
             >
               Gasto simple
             </button>
             <button
               type="button"
               onClick={() => setMode("commitment")}
-              className={`flex-1 py-2 border-l border-gray-200 transition-colors ${mode === "commitment" ? "text-white" : "text-gray-500 hover:bg-gray-50"}`}
-              style={mode === "commitment" ? { backgroundColor: "#0d9488" } : {}}
+              className={`flex-1 py-2 border-l border-gray-200 transition-colors ${mode === "commitment" ? "text-white bg-primary" : "text-gray-500 hover:bg-gray-50"}`}
             >
               Compromiso
             </button>
@@ -109,7 +107,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                 onChange={(e) => set("description", e.target.value)}
                 placeholder='Ej. "Compra cemento Argos", "Contrato Movimiento Tierras"'
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -124,7 +122,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                   value={form.date}
                   onChange={(e) => set("date", e.target.value)}
                   required
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
@@ -139,7 +137,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                   onChange={(e) => set("totalCommitted", e.target.value)}
                   placeholder="0"
                   required
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -153,7 +151,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                 <select
                   value={form.resourceId}
                   onChange={(e) => set("resourceId", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500 text-gray-700"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary text-gray-700"
                 >
                   <option value="">Sin mapear</option>
                   {apuResources.map((r) => (
@@ -176,18 +174,18 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
                   value={form.notes}
                   onChange={(e) => set("notes", e.target.value)}
                   placeholder='Ej. "Contrato #CT-004", "Factura pendiente"'
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
             )}
 
             {/* Amount preview */}
             {amount > 0 && (
-              <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: "#f0fdfa" }}>
+              <div className="rounded-lg px-4 py-3 text-sm bg-primary/10">
                 <span className="text-gray-500">
                   {mode === "simple" ? "Total a registrar:" : "Total comprometido:"}
                 </span>
-                <span className="float-right font-bold" style={{ color: "#0d9488" }}>
+                <span className="float-right font-bold text-primary">
                   {formatCOP(amount)}
                 </span>
               </div>
@@ -206,8 +204,7 @@ export default function CommitmentForm({ projectId, costItemId, costItemDescript
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex-1 py-2 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50 bg-primary"
             >
               {saving ? "Guardando..." : mode === "simple" ? "Registrar gasto" : "Crear compromiso"}
             </button>

@@ -21,8 +21,7 @@ export default function StatusSuggestionBanner({ suggestedStatus, onAccept, onDi
       </div>
       <button
         onClick={() => onAccept(suggestedStatus)}
-        className="px-3 py-1 rounded text-white text-xs font-medium"
-        style={{ backgroundColor: "#0d9488" }}
+        className="px-3 py-1 rounded text-white text-xs font-medium bg-primary"
       >
         Actualizar estado
       </button>

@@ -65,9 +65,9 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
             <p className="text-gray-400 uppercase tracking-wide font-semibold mb-0.5">Comprometido</p>
             <p className="font-bold text-gray-800">{formatCOP(commitment.totalCommitted)}</p>
           </div>
-          <div className="rounded-lg px-3 py-2" style={{ backgroundColor: "#f0fdfa" }}>
-            <p className="uppercase tracking-wide font-semibold mb-0.5" style={{ color: "#0d9488" }}>Pendiente</p>
-            <p className="font-bold" style={{ color: "#0d9488" }}>{formatCOP(maxAmount)}</p>
+          <div className="rounded-lg px-3 py-2 bg-primary/10">
+            <p className="uppercase tracking-wide font-semibold mb-0.5 text-primary">Pendiente</p>
+            <p className="font-bold text-primary">{formatCOP(maxAmount)}</p>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
                 value={form.date}
                 onChange={(e) => set("date", e.target.value)}
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -101,7 +101,7 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
                 onChange={(e) => set("amount", e.target.value)}
                 placeholder="0"
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
               />
               <p className="text-xs text-gray-400 mt-1">
                 Máximo: {formatCOP(maxAmount)}
@@ -118,15 +118,15 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
                 value={form.notes}
                 onChange={(e) => set("notes", e.target.value)}
                 placeholder='Ej. "Transferencia #12345"'
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
               />
             </div>
 
             {/* Preview */}
             {amount > 0 && (
-              <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: "#f0fdfa" }}>
+              <div className="rounded-lg px-4 py-3 text-sm bg-primary/10">
                 <span className="text-gray-500">Abono a registrar:</span>
-                <span className="float-right font-bold" style={{ color: "#0d9488" }}>
+                <span className="float-right font-bold text-primary">
                   {formatCOP(amount)}
                 </span>
               </div>
@@ -145,8 +145,7 @@ export default function PaymentForm({ projectId, commitment, onClose, onCreated 
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex-1 py-2 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50 bg-primary"
             >
               {saving ? "Guardando..." : "Registrar abono"}
             </button>

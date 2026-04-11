@@ -75,7 +75,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
             placeholder="Buscar insumo por nombre o código..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setSelected(null); }}
-            className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+            className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -91,8 +91,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
               <div
                 key={r.id}
                 onClick={() => setSelected(r)}
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors mb-1"
-                style={isSelected ? { backgroundColor: "#f0fdfa", border: "1px solid #0d9488" } : { border: "1px solid transparent" }}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors mb-1 border ${isSelected ? "bg-primary/10 border-primary" : "border-transparent"}`}
               >
                 <div>
                   <p className="text-sm font-medium text-gray-800">{r.description}</p>
@@ -114,7 +113,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
         {selected && (
           <div className="px-6 pb-4 border-t border-gray-100 pt-4">
             <p className="text-xs font-semibold text-gray-500 mb-3">
-              Insumo seleccionado: <span className="text-teal-600">{selected.description}</span>
+              Insumo seleccionado: <span className="text-primary">{selected.description}</span>
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -123,7 +122,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
                   type="number" step="0.001" min="0"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
@@ -132,7 +131,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
                   type="number" step="0.5" min="0"
                   value={wastePct}
                   onChange={(e) => setWastePct(e.target.value)}
-                  className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -143,8 +142,7 @@ export default function AddLineModal({ apuItemId, existingLineCount, onClose, on
           <button
             onClick={handleAdd}
             disabled={!selected || saving}
-            className="flex-1 py-2.5 rounded text-sm font-medium text-white disabled:opacity-40"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex-1 py-2.5 rounded text-sm font-medium text-white disabled:opacity-40 bg-primary"
           >
             {saving ? "Agregando..." : "Agregar insumo"}
           </button>

@@ -10,7 +10,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  material: "bg-teal-100 text-teal-800",
+  material: "bg-primary/10 text-primary",
   labor: "bg-blue-100 text-blue-800",
   equipment: "bg-gray-100 text-gray-700",
   transport: "bg-purple-100 text-purple-800",
@@ -67,9 +67,9 @@ export default function ResourceTable({ resources, loading, selectedId, onSelect
               key={r.id}
               onClick={() => onSelect(r)}
               className="border-b border-gray-100 cursor-pointer transition-colors hover:bg-gray-50"
-              style={isSelected ? { borderLeft: "3px solid #0d9488", backgroundColor: "#f0fdfa" } : { borderLeft: "3px solid transparent" }}
+              style={isSelected ? { borderLeft: "3px solid #2D7D9A", backgroundColor: "#EBF5F9" } : { borderLeft: "3px solid transparent" }}
             >
-              <td className="px-6 py-4 font-mono text-teal-600 font-medium">{r.code}</td>
+              <td className="px-6 py-4 font-mono text-primary font-medium">{r.code}</td>
               <td className="px-4 py-4 text-gray-800">{r.description}</td>
               <td className="px-4 py-4 text-gray-600">{r.unit}</td>
               <td className="px-4 py-4">

@@ -41,7 +41,7 @@ export default function ClientesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar cliente..."
-          className="border border-gray-200 rounded-lg px-4 py-1.5 text-sm w-64 focus:outline-none focus:border-teal-500"
+          className="border border-gray-200 rounded-lg px-4 py-1.5 text-sm w-64 focus:outline-none focus:border-primary"
         />
       </PageHeader>
 
@@ -53,8 +53,7 @@ export default function ClientesPage() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary"
           >
             + Nuevo cliente
           </button>

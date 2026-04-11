@@ -43,8 +43,7 @@ export default function ProyectosPage() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm bg-primary"
           >
             + Nuevo proyecto
           </button>
@@ -57,11 +56,7 @@ export default function ProyectosPage() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                style={filter === f
-                  ? { backgroundColor: "white", color: "#0d9488", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }
-                  : { color: "#6b7280" }
-                }
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === f ? "bg-white text-primary shadow-sm" : "text-gray-500"}`}
               >
                 {FILTER_LABELS[f]}
               </button>
@@ -86,7 +81,7 @@ export default function ProyectosPage() {
             {/* Create new card */}
             <button
               onClick={() => setShowForm(true)}
-              className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-5 flex flex-col items-center justify-center gap-3 hover:border-teal-400 transition-colors min-h-[200px]"
+              className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-5 flex flex-col items-center justify-center gap-3 hover:border-primary/60 transition-colors min-h-[200px]"
             >
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400">
                 +

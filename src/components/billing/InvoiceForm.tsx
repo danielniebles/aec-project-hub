@@ -137,7 +137,7 @@ export default function InvoiceForm() {
       <div className="flex-1 overflow-auto px-8 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-          <Link href="/facturas" className="hover:text-teal-600">Facturas</Link>
+          <Link href="/facturas" className="hover:text-primary">Facturas</Link>
           <span>›</span>
           <span className="text-gray-600">Nueva factura</span>
         </div>
@@ -155,7 +155,7 @@ export default function InvoiceForm() {
                 value={clientId}
                 onChange={(e) => { setClientId(e.target.value); setProjectId(""); }}
                 required
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               >
                 <option value="">Seleccionar cliente...</option>
                 {clients.map((c) => (
@@ -171,7 +171,7 @@ export default function InvoiceForm() {
                 onChange={(e) => setProjectId(e.target.value)}
                 required
                 disabled={!clientId && !prefilledProjectId}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500 disabled:bg-gray-50"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary disabled:bg-gray-50"
               >
                 <option value="">Seleccionar proyecto...</option>
                 {projects.map((p) => (
@@ -186,7 +186,7 @@ export default function InvoiceForm() {
                 <select
                   value={purchaseOrderId}
                   onChange={(e) => setPurchaseOrderId(e.target.value)}
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 >
                   <option value="">Sin OC asociada</option>
                   {pos.map((po) => (
@@ -211,7 +211,7 @@ export default function InvoiceForm() {
                   onChange={(e) => setNumber(e.target.value)}
                   placeholder="FV-2024-0001"
                   required
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
@@ -221,7 +221,7 @@ export default function InvoiceForm() {
                   value={issueDate}
                   onChange={(e) => setIssueDate(e.target.value)}
                   required
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function InvoiceForm() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Ej. Anticipo 30% — Fase de diseño"
                 required
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -255,7 +255,7 @@ export default function InvoiceForm() {
                   min="0"
                   step="1"
                   required
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
@@ -267,7 +267,7 @@ export default function InvoiceForm() {
                   min="0"
                   max="100"
                   step="0.1"
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -297,7 +297,7 @@ export default function InvoiceForm() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500 resize-none"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary resize-none"
               />
             </div>
           </div>
@@ -314,8 +314,7 @@ export default function InvoiceForm() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50"
-              style={{ backgroundColor: "#0d9488" }}
+              className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50 bg-primary"
             >
               {saving ? "Guardando..." : "Crear factura (borrador)"}
             </button>

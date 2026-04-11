@@ -82,16 +82,11 @@ export default function AssignAPUModal({
               <div
                 key={item.id}
                 onClick={() => setSelected(item)}
-                className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border"
-                style={
-                  isSelected
-                    ? { borderColor: "#0d9488", backgroundColor: "#f0fdfa" }
-                    : { borderColor: "transparent", backgroundColor: "#f9fafb" }
-                }
+                className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border ${isSelected ? "border-primary bg-primary/10" : "border-transparent bg-gray-50"}`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-teal-600 font-semibold">{item.code}</span>
+                    <span className="font-mono text-xs text-primary font-semibold">{item.code}</span>
                     <span className="text-xs text-gray-400">{item.category}</span>
                   </div>
                   <p className="text-sm font-medium text-gray-800 mt-0.5">{item.description}</p>
@@ -111,8 +106,7 @@ export default function AssignAPUModal({
           <button
             onClick={handleAssign}
             disabled={!selected || saving}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40 bg-primary"
           >
             {saving ? "Asignando..." : "Asignar APU"}
           </button>

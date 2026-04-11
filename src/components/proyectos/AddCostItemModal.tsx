@@ -169,7 +169,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
               onClick={() => setTab(t.key)}
               className={`py-3 px-4 text-sm font-medium border-b-2 -mb-px transition-colors ${
                 tab === t.key
-                  ? "border-teal-500 text-teal-600"
+                  ? "border-primary text-primary"
                   : "border-transparent text-gray-400 hover:text-gray-600"
               }`}
             >
@@ -190,16 +190,11 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                   <div
                     key={item.id}
                     onClick={() => setSelectedAPU(item)}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border"
-                    style={
-                      isSelected
-                        ? { borderColor: "#0d9488", backgroundColor: "#f0fdfa" }
-                        : { borderColor: "transparent", backgroundColor: "#f9fafb" }
-                    }
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border ${isSelected ? "border-primary bg-primary/10" : "border-transparent bg-gray-50"}`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-teal-600 font-semibold">{item.code}</span>
+                        <span className="font-mono text-xs text-primary font-semibold">{item.code}</span>
                         <span className="text-xs text-gray-400">{item.category}</span>
                       </div>
                       <p className="text-sm font-medium text-gray-800 mt-0.5">{item.description}</p>
@@ -223,7 +218,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                 value={resourceSearch}
                 onChange={(e) => setResourceSearch(e.target.value)}
                 placeholder="Buscar insumo por nombre o código..."
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500 mb-3"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary mb-3"
               />
               <div className="space-y-2">
                 {resources.map((r) => {
@@ -233,16 +228,11 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                     <div
                       key={r.id}
                       onClick={() => setSelectedResource(r)}
-                      className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border"
-                      style={
-                        isSelected
-                          ? { borderColor: "#0d9488", backgroundColor: "#f0fdfa" }
-                          : { borderColor: "transparent", backgroundColor: "#f9fafb" }
-                      }
+                      className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all border ${isSelected ? "border-primary bg-primary/10" : "border-transparent bg-gray-50"}`}
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-semibold" style={{ color: "#0369a1" }}>
+                          <span className="font-mono text-xs font-semibold text-blue-600">
                             {r.code}
                           </span>
                           <span className="text-xs text-gray-400">{r.unit}</span>
@@ -286,7 +276,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                   value={manualForm.description}
                   onChange={(e) => setManualForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder='Ej. "Limpieza general obra", "Señalización temporal"'
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -299,7 +289,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                     value={manualForm.unit}
                     onChange={(e) => setManualForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder='Ej. "GL", "m²", "día"'
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -309,7 +299,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                   <select
                     value={manualForm.category}
                     onChange={(e) => setManualForm((f) => ({ ...f, category: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500 text-gray-700"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary text-gray-700"
                   >
                     {COST_CATEGORIES.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -328,7 +318,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                     step="0.01"
                     value={manualForm.quantity}
                     onChange={(e) => setManualForm((f) => ({ ...f, quantity: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -341,14 +331,14 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                     step="0.01"
                     value={manualForm.unitCost}
                     onChange={(e) => setManualForm((f) => ({ ...f, unitCost: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
               {parseFloat(manualForm.quantity) > 0 && parseFloat(manualForm.unitCost) > 0 && (
-                <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: "#f0fdfa" }}>
+                <div className="rounded-lg px-4 py-3 text-sm bg-primary/10">
                   <span className="text-gray-500">Total presupuestado:</span>
-                  <span className="float-right font-bold" style={{ color: "#0d9488" }}>
+                  <span className="float-right font-bold text-primary">
                     {formatCOP(parseFloat(manualForm.quantity) * parseFloat(manualForm.unitCost))}
                   </span>
                 </div>
@@ -361,7 +351,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
         {tab === "apu" && selectedAPU && (
           <div className="px-6 py-4 border-t border-gray-100">
             <p className="text-xs text-gray-500 mb-2">
-              <span className="font-semibold text-teal-600">{selectedAPU.description}</span>
+              <span className="font-semibold text-primary">{selectedAPU.description}</span>
               {" — precio unitario: "}
               {formatCOP(computeAPUUnitPrice(selectedAPU))}
             </p>
@@ -376,7 +366,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                   min="0.01"
                   value={apuQty}
                   onChange={(e) => setApuQty(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 />
               </div>
               <div className="pt-5 text-sm text-gray-500">
@@ -392,7 +382,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
         {tab === "resource" && selectedResource && (
           <div className="px-6 py-4 border-t border-gray-100">
             <p className="text-xs text-gray-500 mb-2">
-              <span className="font-semibold" style={{ color: "#0369a1" }}>{selectedResource.description}</span>
+              <span className="font-semibold text-blue-600">{selectedResource.description}</span>
               {selectedResource.prices[0]
                 ? ` — ${formatCOP(Number(selectedResource.prices[0].price))} / ${selectedResource.unit}`
                 : " — sin precio registrado"}
@@ -408,7 +398,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
                   min="0.01"
                   value={resourceQty}
                   onChange={(e) => setResourceQty(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 />
               </div>
               {selectedResource.prices[0] && (
@@ -430,8 +420,7 @@ export default function AddCostItemModal({ projectId, onClose, onAdded }: Props)
           <button
             onClick={handleAdd}
             disabled={!canAdd || saving}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40 bg-primary"
           >
             {saving ? "Agregando..." : "Agregar al presupuesto"}
           </button>

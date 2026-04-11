@@ -9,7 +9,7 @@ export const STATUS_LABEL: Record<string, string> = {
 
 export const STATUS_BADGE: Record<string, string> = {
   prospect:   "bg-gray-100 text-gray-600",
-  design:     "bg-teal-100 text-teal-700",
+  design:     "bg-primary/10 text-primary",
   permitting: "bg-purple-100 text-purple-700",
   execution:  "bg-blue-100 text-blue-700",
   closeout:   "bg-orange-100 text-orange-700",
@@ -18,7 +18,7 @@ export const STATUS_BADGE: Record<string, string> = {
 
 export const STATUS_BORDER: Record<string, string> = {
   prospect:   "border-gray-300",
-  design:     "border-teal-400",
+  design:     "border-primary/60",
   permitting: "border-purple-400",
   execution:  "border-blue-500",
   closeout:   "border-orange-400",

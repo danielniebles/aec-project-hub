@@ -57,7 +57,7 @@ export default function PurchaseOrderForm({ projectId, clientId, onSuccess, onCl
               onChange={(e) => setNumber(e.target.value)}
               placeholder="OC-2024-001"
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -71,7 +71,7 @@ export default function PurchaseOrderForm({ projectId, clientId, onSuccess, onCl
               min="0"
               step="1"
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function PurchaseOrderForm({ projectId, clientId, onSuccess, onCl
               value={issueDate}
               onChange={(e) => setIssueDate(e.target.value)}
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -92,7 +92,7 @@ export default function PurchaseOrderForm({ projectId, clientId, onSuccess, onCl
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
           </div>
 
@@ -109,8 +109,7 @@ export default function PurchaseOrderForm({ projectId, clientId, onSuccess, onCl
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-50"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex-1 px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-50 bg-primary"
             >
               {saving ? "Guardando..." : "Guardar OC"}
             </button>

@@ -5,6 +5,13 @@
   --font-display: var(--font-manrope);
 }
 
+@theme {
+  --color-primary: #2D7D9A;
+  --color-secondary: #4A6D88;
+  --color-tertiary: #A06829;
+  --color-neutral: #262A2B;
+}
+
 body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }

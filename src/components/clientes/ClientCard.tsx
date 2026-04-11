@@ -29,7 +29,7 @@ export default function ClientCard({ client }: Props) {
 
   return (
     <Link href={`/clientes/${client.id}`} className="block">
-      <div className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow border border-transparent hover:border-teal-100">
+      <div className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow border border-transparent hover:border-primary/10">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h3 className="text-sm font-semibold text-gray-900">{client.name}</h3>
@@ -37,7 +37,7 @@ export default function ClientCard({ client }: Props) {
               <p className="text-xs text-gray-400 mt-0.5">NIT {client.taxId}</p>
             )}
           </div>
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-teal-50 text-teal-700">
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/5 text-primary">
             {termLabel}
           </span>
         </div>

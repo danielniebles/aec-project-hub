@@ -37,8 +37,7 @@ export default function PlantillasAPUPage() {
       <PageHeader title="Plantillas APU">
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white"
-          style={{ backgroundColor: "#0d9488" }}
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white bg-primary"
         >
           <span>+</span> Nueva plantilla
         </button>
@@ -70,12 +69,12 @@ export default function PlantillasAPUPage() {
                 return (
                   <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3">
-                      <Link href={`/plantillas-apu/${item.id}`} className="font-mono text-teal-600 font-medium hover:underline">
+                      <Link href={`/plantillas-apu/${item.id}`} className="font-mono text-primary font-medium hover:underline">
                         {item.code}
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-gray-800">
-                      <Link href={`/plantillas-apu/${item.id}`} className="hover:text-teal-600">
+                      <Link href={`/plantillas-apu/${item.id}`} className="hover:text-primary">
                         {item.description}
                       </Link>
                     </td>

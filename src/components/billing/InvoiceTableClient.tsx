@@ -127,8 +127,7 @@ export default function InvoiceTableClient({
           </span>
           <Link
             href={`/proyectos/${suggestedStatus.projectId}`}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
-            style={{ backgroundColor: "#0d9488" }}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-primary"
           >
             Ver proyecto
           </Link>
@@ -167,14 +166,14 @@ export default function InvoiceTableClient({
                     <td className="px-6 py-3 font-mono text-xs font-semibold text-gray-700">{inv.number}</td>
                     {showClient && (
                       <td className="px-6 py-3">
-                        <Link href={`/clientes/${inv.client.id}`} className="text-teal-600 hover:underline">
+                        <Link href={`/clientes/${inv.client.id}`} className="text-primary hover:underline">
                           {inv.client.name}
                         </Link>
                       </td>
                     )}
                     {showProject && (
                       <td className="px-6 py-3">
-                        <Link href={`/proyectos/${inv.project.id}`} className="text-gray-600 hover:text-teal-600">
+                        <Link href={`/proyectos/${inv.project.id}`} className="text-gray-600 hover:text-primary">
                           {inv.project.name}
                         </Link>
                       </td>
@@ -190,8 +189,7 @@ export default function InvoiceTableClient({
                             <button
                               onClick={() => handleSend(inv)}
                               disabled={isBusy}
-                              className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
-                              style={{ backgroundColor: "#0d9488" }}
+                              className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50 bg-primary"
                             >
                               Enviar
                             </button>
@@ -210,8 +208,7 @@ export default function InvoiceTableClient({
                             <button
                               onClick={() => handleMarkPaid(inv.id)}
                               disabled={isBusy}
-                              className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
-                              style={{ backgroundColor: "#0d9488" }}
+                              className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50 bg-primary"
                             >
                               Marcar pagada
                             </button>
@@ -231,7 +228,7 @@ export default function InvoiceTableClient({
                     <tr className="border-b border-gray-50 bg-gray-50">
                       <td colSpan={colCount - 1} className="px-6 py-2 text-xs">
                         {feedback.type === "success" && (
-                          <span className="text-teal-600">
+                          <span className="text-primary">
                             Recordatorio enviado.{" "}
                             {feedback.nextAllowedAt && (
                               <>Próximo disponible: {formatDate(feedback.nextAllowedAt)}</>

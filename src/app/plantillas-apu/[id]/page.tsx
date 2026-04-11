@@ -92,8 +92,7 @@ export default function APUDetailPage() {
         <button
           onClick={handleSaveAIU}
           disabled={saving}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white"
-          style={{ backgroundColor: "#0d9488" }}
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white bg-primary"
         >
           {saving ? "Guardando..." : "💾 Guardar Plantilla"}
         </button>
@@ -105,7 +104,7 @@ export default function APUDetailPage() {
           {/* Breadcrumb + title */}
           <div className="mb-5">
             <div className="flex items-center gap-2 text-sm mb-2">
-              <span className="bg-teal-100 text-teal-700 font-mono font-semibold px-2 py-0.5 rounded text-xs">
+              <span className="bg-primary/10 text-primary font-mono font-semibold px-2 py-0.5 rounded text-xs">
                 {item.code}
               </span>
               <span className="text-gray-400">•</span>
@@ -123,7 +122,7 @@ export default function APUDetailPage() {
             <div className="px-5 py-3 border-t border-gray-100">
               <button
                 onClick={() => setShowAddLine(true)}
-                className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
+                className="text-sm text-primary hover:text-primary font-medium flex items-center gap-1"
               >
                 <span>+</span> Agregar insumo
               </button>

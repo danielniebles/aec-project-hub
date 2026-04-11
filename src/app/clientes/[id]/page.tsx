@@ -28,7 +28,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
       <div className="flex-1 overflow-auto px-8 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-          <Link href="/clientes" className="hover:text-teal-600">Clientes</Link>
+          <Link href="/clientes" className="hover:text-primary">Clientes</Link>
           <span>›</span>
           <span className="text-gray-600">{client.name}</span>
         </div>
@@ -41,7 +41,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
               <p className="text-sm text-gray-400 mt-0.5">NIT {client.taxId}</p>
             )}
           </div>
-          <span className="text-xs font-medium px-3 py-1 rounded-full bg-teal-50 text-teal-700">
+          <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary/5 text-primary">
             {termLabel}
           </span>
         </div>
@@ -82,7 +82,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-6 py-3 font-mono text-xs text-gray-500">{p.code}</td>
                     <td className="px-6 py-3">
-                      <Link href={`/proyectos/${p.id}`} className="text-teal-600 hover:underline font-medium">
+                      <Link href={`/proyectos/${p.id}`} className="text-primary hover:underline font-medium">
                         {p.name}
                       </Link>
                     </td>
@@ -119,7 +119,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
                   <tr key={inv.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-6 py-3 font-mono text-xs font-semibold text-gray-700">{inv.number}</td>
                     <td className="px-6 py-3">
-                      <Link href={`/proyectos/${inv.project.id}`} className="text-teal-600 hover:underline">
+                      <Link href={`/proyectos/${inv.project.id}`} className="text-primary hover:underline">
                         {inv.project.name}
                       </Link>
                     </td>

@@ -74,12 +74,12 @@ export default function CatalogoPage() {
             placeholder="Buscar insumos por nombre..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-200 rounded px-3 py-1.5 text-sm w-56 focus:outline-none focus:border-teal-500"
+            className="border border-gray-200 rounded px-3 py-1.5 text-sm w-56 focus:outline-none focus:border-primary"
           />
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="border border-gray-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500"
+            className="border border-gray-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
           >
             <option value="">Tipo</option>
             <option value="material">Material</option>
@@ -90,8 +90,7 @@ export default function CatalogoPage() {
           </select>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-medium text-white bg-primary"
           >
             <span>+</span> Nuevo insumo
           </button>

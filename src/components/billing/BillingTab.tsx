@@ -149,8 +149,7 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
           {hasClient ? (
             <button
               onClick={() => setShowPOForm(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-primary"
             >
               + Agregar OC
             </button>
@@ -205,8 +204,7 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
           {hasClient ? (
             <Link
               href={`/facturas/nueva?projectId=${project.id}`}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-primary"
             >
               + Nueva factura
             </Link>
@@ -256,8 +254,7 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
                               <button
                                 onClick={() => handleSendInvoice(inv)}
                                 disabled={isBusy}
-                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
-                                style={{ backgroundColor: "#0d9488" }}
+                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50 bg-primary"
                               >
                                 Enviar
                               </button>
@@ -276,8 +273,7 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
                               <button
                                 onClick={() => handleMarkPaid(inv.id)}
                                 disabled={isBusy}
-                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50"
-                                style={{ backgroundColor: "#0d9488" }}
+                                className="px-2.5 py-1 rounded text-xs font-semibold text-white disabled:opacity-50 bg-primary"
                               >
                                 Marcar pagada
                               </button>
@@ -297,7 +293,7 @@ export default function BillingTab({ project, onRefresh, onStatusChange }: Props
                       <tr className="border-b border-gray-50 bg-gray-50">
                         <td colSpan={7} className="px-6 py-2 text-xs">
                           {feedback.type === "success" && (
-                            <span className="text-teal-600">
+                            <span className="text-primary">
                               Recordatorio enviado.{" "}
                               {feedback.nextAllowedAt && <>Próximo disponible: {formatDate(feedback.nextAllowedAt)}</>}
                             </span>

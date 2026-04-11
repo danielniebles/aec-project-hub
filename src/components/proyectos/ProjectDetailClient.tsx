@@ -69,15 +69,13 @@ function ItemGroup({
             <div className="flex items-center gap-3">
               {isAPUItem ? (
                 <span
-                  className="font-mono text-xs font-bold bg-white border border-gray-200 px-2 py-0.5 rounded"
-                  style={{ color: "#0d9488" }}
+                  className="font-mono text-xs font-bold bg-white border border-gray-200 px-2 py-0.5 rounded text-primary"
                 >
                   {item.apuItem?.code}
                 </span>
               ) : isResourceItem ? (
                 <span
-                  className="font-mono text-xs font-bold bg-white border border-gray-200 px-2 py-0.5 rounded"
-                  style={{ color: "#0369a1" }}
+                  className="font-mono text-xs font-bold bg-white border border-gray-200 px-2 py-0.5 rounded text-blue-600"
                 >
                   {item.resource?.code}
                 </span>
@@ -95,7 +93,7 @@ function ItemGroup({
               {!isAPUItem && !isResourceItem && onAssignAPU && (
                 <button
                   onClick={() => onAssignAPU(item)}
-                  className="text-xs font-medium text-teal-600 hover:text-teal-700 underline underline-offset-2 transition-colors"
+                  className="text-xs font-medium text-primary hover:text-primary underline underline-offset-2 transition-colors"
                 >
                   Asignar APU
                 </button>
@@ -109,8 +107,8 @@ function ItemGroup({
                 </div>
                 <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full"
-                    style={{ width: `${pct}%`, backgroundColor: "#0d9488" }}
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${pct}%` }}
                   />
                 </div>
               </div>
@@ -122,8 +120,7 @@ function ItemGroup({
               </span>
               <button
                 onClick={() => onAddCommitment(item)}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
-                style={{ backgroundColor: "#0d9488" }}
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors bg-primary"
               >
                 <Plus size={16} /> Agregar
               </button>
@@ -159,7 +156,7 @@ function ItemGroup({
                 {showExpand && (
                   <button
                     onClick={() => onToggle(c.id)}
-                    className="text-gray-400 hover:text-teal-600 transition-colors"
+                    className="text-gray-400 hover:text-primary transition-colors"
                   >
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </button>
@@ -182,10 +179,7 @@ function ItemGroup({
               <td className="px-4 py-3 text-right text-sm text-gray-700 tabular-nums">
                 {formatCOP(c.totalCommitted)}
               </td>
-              <td
-                className="px-4 py-3 text-right text-sm font-semibold tabular-nums"
-                style={{ color: "#0d9488" }}
-              >
+              <td className="px-4 py-3 text-right text-sm font-semibold tabular-nums text-primary">
                 {formatCOP(c.totalPaid)}
               </td>
               <td
@@ -197,10 +191,7 @@ function ItemGroup({
               </td>
               <td className="px-4 py-3 text-center">
                 {c.resource ? (
-                  <span
-                    className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full"
-                    style={{ backgroundColor: "#f0fdfa", color: "#0d9488" }}
-                  >
+                  <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                     {c.resource.code}
                   </span>
                 ) : (
@@ -212,7 +203,7 @@ function ItemGroup({
                   {c.status !== "Pagado" && (
                     <button
                       onClick={() => onAddPayment(c)}
-                      className="text-xs font-semibold px-2 py-1 rounded border text-gray-500 border-gray-200 hover:border-teal-500 hover:text-teal-600 transition-colors whitespace-nowrap"
+                      className="text-xs font-semibold px-2 py-1 rounded border text-gray-500 border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap"
                     >
                       + Abonar
                     </button>
@@ -231,7 +222,7 @@ function ItemGroup({
             {isExpanded && c.payments.length > 0 && (
               <tr className="bg-gray-50 border-b border-gray-100">
                 <td colSpan={9} className="pl-16 pr-6 py-3">
-                  <div className="border-l-2 border-teal-200 pl-4 space-y-2">
+                  <div className="border-l-2 border-primary/20 pl-4 space-y-2">
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
                       Historial de abonos
                     </p>
@@ -242,8 +233,7 @@ function ItemGroup({
                       >
                         <div className="flex items-center gap-4">
                           <div
-                            className="w-6 h-6 rounded-full bg-teal-50 flex items-center justify-center text-xs font-bold"
-                            style={{ color: "#0d9488" }}
+                            className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary"
                           >
                             {idx + 1}
                           </div>
@@ -383,14 +373,14 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
       <PageHeader title="">
         <input
           placeholder="Buscar en el proyecto..."
-          className="border border-gray-200 rounded-lg px-4 py-1.5 text-sm w-64 focus:outline-none focus:border-teal-500"
+          className="border border-gray-200 rounded-lg px-4 py-1.5 text-sm w-64 focus:outline-none focus:border-primary"
         />
       </PageHeader>
 
       <div className="flex-1 overflow-auto px-8 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
-          <Link href="/proyectos" className="hover:text-teal-600">
+          <Link href="/proyectos" className="hover:text-primary">
             Proyectos
           </Link>
           <span>›</span>
@@ -405,7 +395,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               <select
                 value={project.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
-                className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500 ${badge}`}
+                className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${badge}`}
               >
                 {Object.entries(STATUS_LABEL).map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
@@ -422,7 +412,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               )}
               <span className="text-gray-300">|</span>
               {project.client ? (
-                <Link href={`/clientes/${project.client.id}`} className="text-teal-600 hover:underline">
+                <Link href={`/clientes/${project.client.id}`} className="text-primary hover:underline">
                   {project.client.name}
                 </Link>
               ) : assigningClient ? (
@@ -431,7 +421,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                   defaultValue=""
                   onChange={(e) => handleAssignClient(e.target.value)}
                   onBlur={() => setAssigningClient(false)}
-                  className="border border-gray-200 rounded px-2 py-0.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="border border-gray-200 rounded px-2 py-0.5 text-sm focus:outline-none focus:border-primary"
                 >
                   <option value="" disabled>Seleccionar cliente...</option>
                   {clientOptions.map((c) => (
@@ -441,7 +431,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               ) : (
                 <button
                   onClick={openClientPicker}
-                  className="text-gray-400 italic hover:text-teal-600 transition-colors"
+                  className="text-gray-400 italic hover:text-primary transition-colors"
                 >
                   + Asignar cliente
                 </button>
@@ -454,8 +444,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
             </button>
             <button
               onClick={() => setShowAddItem(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary"
             >
               <Plus size={16} /> Nuevo ítem
             </button>
@@ -468,12 +457,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="pb-3 text-sm font-medium transition-colors"
-              style={
-                activeTab === tab
-                  ? { color: "#0d9488", borderBottom: "2px solid #0d9488" }
-                  : { color: "#9ca3af" }
-              }
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === tab ? "text-primary border-b-2 border-primary -mb-px" : "text-gray-400"}`}
             >
               {tab}
             </button>
@@ -514,17 +498,11 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                   {formatCOP(project.totalComprometido)}
                 </p>
               </div>
-              <div
-                className="bg-white rounded-xl p-5 shadow-sm border-l-4"
-                style={{ borderColor: "#0d9488" }}
-              >
-                <p
-                  className="text-xs font-semibold uppercase tracking-wide mb-2"
-                  style={{ color: "#0d9488" }}
-                >
+              <div className="bg-white rounded-xl p-5 shadow-sm border-l-4 border-primary">
+                <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-primary">
                   Pagado
                 </p>
-                <p className="text-xl font-bold font-display" style={{ color: "#0d9488" }}>
+                <p className="text-xl font-bold font-display text-primary">
                   {formatCOP(project.totalPagado)}
                 </p>
               </div>
@@ -625,7 +603,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
 
               <button
                 onClick={() => setShowAddItem(true)}
-                className="w-full py-4 flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-teal-600 border-t border-dashed border-gray-200 hover:bg-gray-50 transition-colors"
+                className="w-full py-4 flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-primary border-t border-dashed border-gray-200 hover:bg-gray-50 transition-colors"
               >
                 <Plus size={16} /> Agregar ítem al presupuesto
               </button>

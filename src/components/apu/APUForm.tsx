@@ -64,14 +64,14 @@ export default function APUForm({ onClose, onCreated }: Props) {
               <label className="text-xs text-gray-500 font-medium">Código *</label>
               <input value={form.code} onChange={(e) => set("code", e.target.value)}
                 placeholder="APU-PLO-001"
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 required />
             </div>
             <div>
               <label className="text-xs text-gray-500 font-medium">Unidad de salida *</label>
               <input value={form.outputUnit} onChange={(e) => set("outputUnit", e.target.value)}
                 placeholder="Unidad, m², ml..."
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 required />
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function APUForm({ onClose, onCreated }: Props) {
             <label className="text-xs text-gray-500 font-medium">Descripción *</label>
             <input value={form.description} onChange={(e) => set("description", e.target.value)}
               placeholder="Nombre de la actividad APU"
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
               required />
           </div>
 
@@ -88,7 +88,7 @@ export default function APUForm({ onClose, onCreated }: Props) {
             <label className="text-xs text-gray-500 font-medium">Categoría *</label>
             <input value={form.category} onChange={(e) => set("category", e.target.value)}
               placeholder="Ej. Instalaciones Hidráulicas"
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
               required />
           </div>
 
@@ -120,8 +120,7 @@ export default function APUForm({ onClose, onCreated }: Props) {
 
           <div className="flex gap-2 pt-2">
             <button type="submit" disabled={saving}
-              className="flex-1 py-2.5 rounded text-sm font-medium text-white"
-              style={{ backgroundColor: "#0d9488" }}>
+              className="flex-1 py-2.5 rounded text-sm font-medium text-white bg-primary">
               {saving ? "Guardando..." : "Crear plantilla"}
             </button>
             <button type="button" onClick={onClose}

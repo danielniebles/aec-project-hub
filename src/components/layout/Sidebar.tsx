@@ -32,11 +32,11 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex flex-col w-56 min-h-full shrink-0" style={{ backgroundColor: "#1a1d23" }}>
+    <aside className="flex flex-col w-56 min-h-full shrink-0 bg-neutral">
       {/* Logo */}
       <div className="px-4 py-5 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: "#0d9488" }}>
+          <div className="w-7 h-7 rounded flex items-center justify-center text-white text-sm font-bold bg-primary">
             A
           </div>
           <div>
@@ -55,11 +55,9 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors"
-              style={{
-                backgroundColor: active ? "#0d9488" : "transparent",
-                color: active ? "#ffffff" : "#9ca3af",
-              }}
+              className={`flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
+                active ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+              }`}
             >
               <Icon size={16} strokeWidth={1.75} />
               <span>{item.label}</span>
@@ -72,8 +70,7 @@ export default function Sidebar() {
       <div className="px-3 pb-4">
         <Link
           href="/proyectos/nuevo"
-          className="flex items-center justify-center gap-2 w-full py-2 rounded text-sm font-medium text-white transition-colors"
-          style={{ backgroundColor: "#0d9488" }}
+          className="flex items-center justify-center gap-2 w-full py-2 rounded text-sm font-medium text-white bg-primary transition-colors hover:bg-primary/90"
         >
           <Plus size={16} />
           <span>Nuevo Proyecto</span>

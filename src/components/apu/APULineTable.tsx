@@ -11,7 +11,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  material: "bg-teal-50 text-teal-700",
+  material: "bg-primary/5 text-primary",
   labor: "bg-blue-50 text-blue-700",
   equipment: "bg-gray-100 text-gray-600",
   transport: "bg-purple-50 text-purple-700",
@@ -67,7 +67,7 @@ export default function APULineTable({ lines, onRemove }: Props) {
           const hasPrice = line.resource.prices.length > 0;
           return (
             <tr key={line.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-              <td className="px-5 py-3 text-teal-600 font-medium">{line.resource.description}</td>
+              <td className="px-5 py-3 text-primary font-medium">{line.resource.description}</td>
               <td className="px-4 py-3">
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${TYPE_COLORS[line.resource.type] ?? "bg-gray-100 text-gray-600"}`}>
                   {TYPE_LABELS[line.resource.type] ?? line.resource.type}

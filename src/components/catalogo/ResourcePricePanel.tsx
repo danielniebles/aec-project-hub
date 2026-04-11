@@ -67,7 +67,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
       <div className="flex items-start justify-between px-5 pt-5 pb-3">
         <div>
           <h2 className="text-base font-semibold text-gray-800">Detalle de Precios</h2>
-          <p className="text-teal-600 text-sm font-medium mt-0.5">{resource.description}</p>
+          <p className="text-primary text-sm font-medium mt-0.5">{resource.description}</p>
         </div>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
       </div>
@@ -77,7 +77,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Historial de Fuentes</span>
           {activeCount > 0 && (
-            <span className="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full">{activeCount} Activas</span>
+            <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-0.5 rounded-full">{activeCount} Activas</span>
           )}
         </div>
 
@@ -178,8 +178,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2 rounded text-sm font-medium text-white"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex-1 py-2 rounded text-sm font-medium text-white bg-primary"
             >
               {saving ? "Guardando..." : "Guardar"}
             </button>
@@ -196,8 +195,7 @@ export default function ResourcePricePanel({ resource, onClose, onPriceAdded }: 
         <div className="border-t border-gray-200 p-4">
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded text-sm font-medium text-white"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded text-sm font-medium text-white bg-primary"
           >
             <Plus size={14} /> Agregar precio
           </button>

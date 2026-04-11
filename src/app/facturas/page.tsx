@@ -27,8 +27,7 @@ export default async function FacturasPage() {
           </div>
           <Link
             href="/facturas/nueva"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ backgroundColor: "#0d9488" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary"
           >
             + Nueva factura
           </Link>
@@ -40,9 +39,9 @@ export default async function FacturasPage() {
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Facturado</p>
             <p className="text-xl font-bold text-gray-900 font-display">{formatCOP(totalFacturado)}</p>
           </div>
-          <div className="bg-white rounded-xl p-5 shadow-sm border-l-4" style={{ borderColor: "#0d9488" }}>
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: "#0d9488" }}>Recaudado</p>
-            <p className="text-xl font-bold font-display" style={{ color: "#0d9488" }}>{formatCOP(totalRecaudado)}</p>
+          <div className="bg-white rounded-xl p-5 shadow-sm border-l-4 border-primary">
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-primary">Recaudado</p>
+            <p className="text-xl font-bold font-display text-primary">{formatCOP(totalRecaudado)}</p>
           </div>
           <div className={`bg-white rounded-xl p-5 shadow-sm ${totalVencido > 0 ? "border-l-4 border-red-400" : ""}`}>
             <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${totalVencido > 0 ? "text-red-600" : "text-gray-400"}`}>

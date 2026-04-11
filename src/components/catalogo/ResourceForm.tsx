@@ -49,7 +49,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
                 value={form.code}
                 onChange={(e) => setForm({ ...form, code: e.target.value })}
                 placeholder="MT-0001"
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 required
               />
             </div>
@@ -59,7 +59,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
                 value={form.unit}
                 onChange={(e) => setForm({ ...form, unit: e.target.value })}
                 placeholder="m², kg, hr..."
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 required
               />
             </div>
@@ -71,7 +71,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="Nombre completo del insumo"
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
               required
             />
           </div>
@@ -82,7 +82,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
               >
                 {/* TODO: Must be configurable or extract to an enum */}
                 <option value="material">Material</option>
@@ -98,7 +98,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
                 placeholder="Plomería, Acabados..."
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary"
                 required
               />
             </div>
@@ -110,7 +110,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
               rows={2}
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-teal-500 resize-none"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm mt-1 focus:outline-none focus:border-primary resize-none"
             />
           </div>
 
@@ -120,8 +120,7 @@ export default function ResourceForm({ onClose, onCreated }: Props) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2.5 rounded text-sm font-medium text-white"
-              style={{ backgroundColor: "#0d9488" }}
+              className="flex-1 py-2.5 rounded text-sm font-medium text-white bg-primary"
             >
               {saving ? "Guardando..." : "Crear insumo"}
             </button>

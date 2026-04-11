@@ -79,7 +79,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
               onChange={field("name")}
               placeholder="Ej. Constructora El Dorado S.A.S."
               required
-              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -90,7 +90,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                 value={form.taxId}
                 onChange={field("taxId")}
                 placeholder="900.123.456-7"
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               />
             </div>
             <div>
@@ -99,7 +99,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                 value={form.contactName}
                 onChange={field("contactName")}
                 placeholder="Nombre del contacto"
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                 value={form.email}
                 onChange={field("email")}
                 placeholder="facturacion@cliente.com"
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               />
             </div>
             <div>
@@ -121,7 +121,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                 value={form.phone}
                 onChange={field("phone")}
                 placeholder="+57 300 000 0000"
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
               value={form.address}
               onChange={field("address")}
               placeholder="Cra. 7 # 32-16, Bogotá"
-              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -142,7 +142,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
               <select
                 value={form.paymentTermType}
                 onChange={field("paymentTermType")}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               >
                 {Object.entries(PAYMENT_TERM_LABELS).map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
@@ -158,7 +158,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
                   onChange={field("fixedDay")}
                   min="1"
                   max="28"
-                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                  className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
             )}
@@ -170,7 +170,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
               value={form.notes}
               onChange={field("notes")}
               rows={2}
-              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500 resize-none"
+              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary resize-none"
             />
           </div>
 
@@ -185,8 +185,7 @@ export default function ClientForm({ onClose, onCreated }: Props) {
             type="submit"
             form="client-form"
             disabled={saving}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50"
-            style={{ backgroundColor: "#0d9488" }}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50 bg-primary"
           >
             {saving ? "Guardando..." : "Crear cliente"}
           </button>

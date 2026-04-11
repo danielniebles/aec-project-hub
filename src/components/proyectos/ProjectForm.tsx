@@ -54,7 +54,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Nombre del proyecto</label>
             <input value={form.name} onChange={(e) => set("name", e.target.value)}
               placeholder="Ej. Centro Comercial El Dorado - Fase II"
-              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
               required />
           </div>
 
@@ -63,13 +63,13 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Código</label>
               <input value={form.code} onChange={(e) => set("code", e.target.value)}
                 placeholder="PRJ-000"
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500"
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                 required />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Tipo de obra</label>
               <select value={form.type} onChange={(e) => set("type", e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500">
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary">
                 {Object.entries(TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
             </div>
@@ -79,7 +79,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado inicial</label>
               <select value={form.status} onChange={(e) => set("status", e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500">
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary">
                 {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
             </div>
@@ -87,7 +87,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ubicación (ciudad/dpto)</label>
               <input value={form.location} onChange={(e) => set("location", e.target.value)}
                 placeholder="Ej. Bogotá, D.C."
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500" />
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary" />
             </div>
           </div>
 
@@ -95,12 +95,12 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Fecha estimada inicio</label>
               <input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500" />
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Fecha estimada fin</label>
               <input type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500" />
+                className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary" />
             </div>
           </div>
 
@@ -109,7 +109,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
             <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)}
               rows={3}
               placeholder="Detalles adicionales sobre el alcance, cliente o requisitos especiales..."
-              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-500 resize-none" />
+              className="w-full mt-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary resize-none" />
           </div>
 
           {error && <p className="text-xs text-red-600">{error}</p>}
@@ -120,8 +120,7 @@ export default function ProjectForm({ onClose, onCreated }: Props) {
             Cancelar
           </button>
           <button onClick={handleSubmit as never} disabled={saving}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50"
-            style={{ backgroundColor: "#0d9488" }}>
+            className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50 bg-primary">
             🚀 {saving ? "Creando..." : "Crear proyecto"}
           </button>
         </div>
